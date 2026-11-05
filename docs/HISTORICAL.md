@@ -56,7 +56,7 @@ The statistical baseline's snapshot Brier is lower than a constant 0.5 on both f
 
 **Not ready.** No artifact is written. Reasons are in the report: proxy prices, no depth, one short regime, and no authority to load a file into the paper process.
 
-Executable simulation is **refused**. `research.backtest` still requires historical ask, depth, quote time, and fee multiplier. Those columns were not created.
+Executable simulation is **refused**. `research.backtest` still requires historical ask, depth, quote time, and fee multiplier. Those columns were not created. A follow-up check of public depth sources is in [DEPTH.md](DEPTH.md): Kalshi does not serve historical ladders, and the free third-party samples that do contain sizes do not cover this 160-contract window.
 
 ## Leakage controls
 
