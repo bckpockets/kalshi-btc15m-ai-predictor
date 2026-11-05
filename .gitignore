@@ -1,0 +1,17 @@
+.env
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.streamlit/secrets.toml
+*.sqlite
+*.sqlite-journal
+*.sqlite-wal
+*.sqlite-shm
+runtime.sqlite*
+artifacts/
+*.joblib
+.DS_Store
