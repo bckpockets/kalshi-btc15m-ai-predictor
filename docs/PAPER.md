@@ -17,7 +17,9 @@ Settings are process-wide (`st.cache_resource`). Use one server and one database
 
 `STARTING_BANKROLL` defaults to **$1000**. It is applied only when the SQLite account row is created. An existing `runtime.sqlite` keeps its cash. There is no deposit or reset control in the UI. For a clean baseline, point `DATABASE_PATH` at a new file (or move the old one aside) and start the app once.
 
-Open positions are valued at **cost**, not marked to market. Reported drawdown is a realized / cost-basis figure. Fills assume the displayed best level is available, capped by that level's size and by the risk limits. There is no queue, latency, or multi-level walk.
+Open positions are valued at **cost** in the equity figure (cash plus open debit). When the current book can lift the whole position at the bid, the portfolio also shows a separate liquidation value after the taker fee. If the bid, tick grid, or fee schedule is missing, that mark is omitted rather than replaced with cost.
+
+Fills, when armed, are `taker-confirm-v1`: one later book, one price level, no queue. The procedure and the limits are in [EXECUTION.md](EXECUTION.md). Do not point this process at an existing paper file.
 
 ## Fee and risk (checked, not retuned)
 
@@ -44,15 +46,44 @@ edge = probability − (price + fee/quantity)
 
 Entries also require a fresh book (this cycle, within `MAX_DATA_AGE`) and a forecast. Final-minute forecasts stay off, so the ledger does not trade that minute on Coinbase.
 
+## Separate database
+
+Use a file that has never held paper rows. Leave any already-running ledger process and its `DATABASE_PATH` alone. This repository does not migrate, reset, or reinterpret that file. A path such as `/workspace/kalshi-paper/runtime.sqlite` is an operator machine path, not a database in this workspace, and it is not a deployment target.
+
+```bash
+mkdir -p "$HOME/kalshi-paper-taker"
+# DATABASE_PATH must not be the legacy file.
+DATABASE_PATH="$HOME/kalshi-paper-taker/runtime.sqlite" \
+STARTING_BANKROLL=1000 \
+streamlit run app.py
+```
+
+No API keys. Do not set `MODEL_PATH` to a pickle you did not train. With the file missing, the forecast version is `statistical-proxy-v1`.
+
 ## Kickoff checklist
 
-- [ ] New database (or a database whose account row you intend to keep). Confirm virtual cash reads $1000.00 if the file is new.
-- [ ] `STARTING_BANKROLL=1000` in the environment if you override anything. No API keys.
-- [ ] Sidebar: simulation off, proxy box off, until you mean to record hypothetical entries.
-- [ ] When you do: enable **Enable paper simulation** and **Allow unvalidated proxy forecasts**. Leave risk defaults unless you are deliberately changing the experiment.
-- [ ] Confirm the active ticker, official threshold, and observation age look live, and that the final minute shows an unavailable forecast.
-- [ ] Confirm the edge table says quotes are unavailable when the book or the quadratic fee schedule is missing, rather than inventing a price.
-- [ ] Note the UTC start time, database path, and whether an artifact is loaded (`statistical-proxy-v1` means baseline only).
+Record the baseline **before** arming fills and **before** enabling either switch.
+
+- [ ] New sqlite path, process not sharing the legacy database.
+- [ ] Sidebar shows execution `taker-confirm-v1`, fee schedule `kalshi-general-table-cent-2026-07-07`, baseline cash $1000.00, open positions 0, resolved 0, fills disarmed.
+- [ ] SQL below matches that screen. If it does not, stop. Do not click Arm.
+- [ ] Click **Arm taker fills** only after the baseline is written down.
+- [ ] Then enable **Enable paper simulation** and **Allow unvalidated proxy forecasts**.
+- [ ] Confirm the final minute shows no forecast, and that an intent row appears before any position row.
+- [ ] A position's `confirm_book_at` is strictly after the intent's `signal_book_at`.
+
+```sql
+SELECT execution_model, fee_schedule, model_version, fills_armed, armed_at,
+       baseline_cash, baseline_open_positions, baseline_open_cost,
+       baseline_resolved_positions, baseline_recorded_at, database_path, provenance
+FROM run_manifest WHERE id=1;
+SELECT initial, cash FROM account WHERE id=1;
+SELECT COUNT(*) AS open_positions, COALESCE(SUM(cost),0) AS open_cost
+  FROM positions WHERE payout IS NULL;
+SELECT COUNT(*) AS resolved_positions FROM positions WHERE payout IS NOT NULL;
+```
+
+Expected before Arm: `fills_armed=0`, cash `1000`, open `0`, resolved `0`. `entry()` in `btc15/paper.py` is the old same-snapshot helper. The engine does not call it, and it refuses to write once a manifest exists.
 
 ## Baseline on a new database
 
@@ -81,7 +112,7 @@ SELECT COUNT(*) AS resolved_forecasts FROM markets WHERE result IS NOT NULL;
 
 ## 24-hour check
 
-Use the same database. Do not reset cash between the baseline and the check. Compare against official resolutions only. A higher virtual equity is not evidence of an edge: fills are optimistic, the sample over one day is a handful of 15-minute contracts, and the proxy is uncalibrated.
+Use the same new database. Do not reset cash between the baseline and the check. Compare fills with official Kalshi results only. A higher virtual equity is not evidence of an edge. One day is a small sample, the proxy is uncalibrated, and the fill win rate is conditional on spread, depth, edge, and cutoff. Forecast calibration stays on the Observed performance tab. The execution model does not include a queue.
 
 Fill this after about 24 hours of uptime (downtime means missed intervals, not zero outcomes):
 

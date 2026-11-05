@@ -62,19 +62,13 @@ Official settlement labels and virtual payouts come only from Kalshi `settled`/`
 
 Disabled on every new server start. In Research controls, enable simulation **and** explicitly permit unvalidated proxy forecasts. These controls never enable real orders: there is no order-submission implementation.
 
-The simulator derives YES asks from opposing NO bids, and vice versa. It only assumes fills at the best available level, caps whole-contract quantity at displayed depth and spend limits, and rejects excessive spreads, insufficient liquidity and late entries. Fees use the retrieved quadratic series multiplier:
+Live paper entries use `taker-confirm-v1`, not the older same-snapshot helper. A YES ask is `1 − best NO bid`, and a NO ask is `1 − best YES bid`, from the order book only. The decision is stored as an intent. A fill is allowed only against a later fresh book, at least `EXECUTION_LATENCY_SECONDS` (default 3) afterward, and only if that later touch is still inside the limit, on the market's price grid, and at least `min_depth` at that one price. The first such book is the only attempt. If it is crossed, thin, or through the limit, the intent expires and does not rest. Displayed size is an upper bound. It is not a queue position, and there is no trade-tape check that a print happened.
 
-```text
-fee = ceil_to_cent(0.07 × quantity × price × (1 − price) × multiplier)
-EV = quantity × estimated_win_probability − entry_cost − fee
-break_even_probability = (entry_cost + fee) / quantity
-```
+Fees follow the public general taker table: model fee `0.07 × multiplier × contracts × price × (1 − price)`, trade fee rounded up to `$0.000001`, and the cash debit rounded up to the next cent. See [docs/EXECUTION.md](docs/EXECUTION.md) for the July 7, 2026 table check and the remaining gaps. Flat fees and a missing grid fail closed. Fills stay off until a baseline row is stored and **Arm taker fills** is clicked, and until both sidebar switches are on. `STARTING_BANKROLL` defaults to $1,000 for a new database only. Nothing resets an existing account.
 
-A missing or unsupported fee type blocks paper entries. Fees are estimates; changes, waivers, promotions or other special terms may require updates. The default minimum EV is $0.03 per contract, maximum spend $10, maximum cash allocation 2%, one entry per interval, 90-second cutoff. `STARTING_BANKROLL` defaults to $1,000 and applies only to a new database account. There is no deposit/reset operation in the UI.
+Cost-basis equity is cash plus open debit. A liquidation mark, when shown, is the bid minus the taker fee and is omitted when that bid cannot cover the position. Fill win rate is not forecast calibration. A hypothetical edge is not evidence of live profit.
 
-Simulation is optimistic about latency and queue competition. The quoted size may disappear before a real fill. No order-book walking, market impact, partial fill queue, or latency slippage is modeled; sizes are capped at one level instead. A displayed hypothetical edge is not proof of profitability. Open positions are valued at cost, not marked to market; the reported drawdown is a realized/cost-basis measure.
-
-[docs/PAPER.md](docs/PAPER.md) is the kickoff checklist and the 24-hour metrics sheet (new database at $1,000, open positions, resolved history).
+[docs/PAPER.md](docs/PAPER.md) is the separate-database kickoff. [docs/EXECUTION.md](docs/EXECUTION.md) is the audit. Do not point a new process at a ledger that already has paper rows.
 
 ## Architecture
 
@@ -153,6 +147,8 @@ The replay requires quote timestamps, YES/NO asks and depth, and historical fee 
 | `MARKET_DISCOVERY_SECONDS` | `60` | Full open-market list interval; current ticker still refreshes every cycle |
 | `CANDLE_SECONDS` | `60` | Candles, Coinbase imbalance, and 24h stats interval |
 | `TRADES_EVERY_CYCLES` | `5` | Kalshi trade-print interval, in collector cycles |
+| `EXECUTION_LATENCY_SECONDS` | `3` | Minimum delay between a paper decision and the book that may fill it |
+| `EXECUTION_INTENT_SECONDS` | `20` | Drop an unfilled intent after this many seconds |
 
 No API keys are needed. `.env`, databases and trained artifacts are ignored by Git. Back up the SQLite database yourself, preferably using SQLite's backup API while the app is running. Storage grows continuously; retention/compaction and multi-worker coordination are not implemented. The app requires continued operation to record observations and resolve its tracked contracts.
 

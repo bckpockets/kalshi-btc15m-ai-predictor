@@ -2,6 +2,8 @@
 
 Research terminal only. Nothing here is a claim of forecast skill, a profitable rule, or investment advice. The statistical baseline stays the live fallback. No paid data feed and no order-placement API is in scope.
 
+Paper execution is versioned separately from this forecast note. Live fills use `taker-confirm-v1` and a new database. See [EXECUTION.md](EXECUTION.md). Do not treat an older same-snapshot ledger as that model.
+
 ## Accuracy
 
 The contract settles on the final 60-second CF Benchmarks BRTI average versus the pre-open average, not on a Coinbase print. Coinbase is a **proxy** for BRTI. It is not the settlement index, and it is not used to fill the last minute.
