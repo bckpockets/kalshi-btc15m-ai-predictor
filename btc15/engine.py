@@ -13,7 +13,8 @@ from btc15.feeds import Kalshi, Coinbase, coinbase_stream
 from btc15.features import build_features
 from btc15.model import statistical, Predictor, BASIS_SIGMA_USD
 from btc15.store import Store
-from btc15.paper import Risk, entry
+from btc15.paper import Risk
+from btc15.execution import step_execution, TAKER_FEE_TYPES, EXECUTION_MODEL, FEE_SCHEDULE
 
 def fee_multiplier(series):
     """Quadratic multiplier, or None if series metadata is missing or unsupported.
@@ -23,7 +24,7 @@ def fee_multiplier(series):
     """
     if not isinstance(series, dict):
         return None
-    if series.get('fee_type')!='quadratic' or series.get('fee_multiplier') is None:
+    if series.get('fee_type') not in TAKER_FEE_TYPES or series.get('fee_multiplier') is None:
         return None
     try:
         value=float(series['fee_multiplier'])
@@ -56,8 +57,13 @@ class Engine:
         self.state={'error':'Connecting to public feeds…','market':None,'prediction':None,'tick':None,'candles':pd.DataFrame(),'book':{},'trades':[]}
         self.ticks=deque(maxlen=5000);self.ids=set();self.enabled=False;self.allow_proxy=False;self.risk=Risk()
         self.age=float(os.getenv('MAX_DATA_AGE','10'));self.poll=max(1,float(os.getenv('POLL_SECONDS','3')))
+        self.min_latency=max(0.,float(os.getenv('EXECUTION_LATENCY_SECONDS','3')))
+        self.max_intent_age=max(self.min_latency,float(os.getenv('EXECUTION_INTENT_SECONDS','20')))
         # Persist at most one Coinbase observation per exchange-timestamp second.
         self._obs=[];self._obs_flush=time.monotonic();self._obs_second=None
+        version=self.model.artifact['version'] if self.model.artifact else 'statistical-proxy-v1'
+        self.execution=self.store.start_run({'execution_model':EXECUTION_MODEL,'fee_schedule':FEE_SCHEDULE,'model_version':version,'model_path':os.getenv('MODEL_PATH','artifacts/model.joblib'),'database_path':self.store.path,'poll_seconds':self.poll,'max_data_age':self.age,'min_latency_seconds':self.min_latency,'max_intent_seconds':self.max_intent_age,'basis_sigma_usd':os.getenv('BASIS_SIGMA_USD','25'),'note':'Coinbase is not BRTI. No orders are submitted. Fills require a later book.'})
+        self.state['execution']=self.execution
         self.threads=[threading.Thread(target=self.run,daemon=True),threading.Thread(target=lambda:asyncio.run(coinbase_stream(self.tick,self.stop)),daemon=True)]
         for t in self.threads:t.start()
         atexit.register(self.close)
@@ -81,14 +87,14 @@ class Engine:
                 self._obs[-1]=t
             if len(self._obs)>=30 or time.monotonic()-self._obs_flush>=5:
                 batch=self._obs;self._obs=[];self._obs_flush=time.monotonic()
-        if batch:
+        if batch and not self.store.legacy_readonly:
             try:self.store.observations(batch)
             except Exception:
                 logging.warning('Observation batch failed', exc_info=True)
     def flush_observations(self):
         with self.lock:
             batch=self._obs;self._obs=[];self._obs_flush=time.monotonic()
-        if not batch:return
+        if not batch or self.store.legacy_readonly:return
         try:self.store.observations(batch)
         except Exception:
             logging.warning('Observation flush failed', exc_info=True)
@@ -160,7 +166,7 @@ class Engine:
                     book={};trades=[];book_received=None;book_ticker=None
                 elif ticker_changed:
                     book={};trades=[];book_received=None;book_ticker=market.ticker
-                if market:
+                if market and not self.store.legacy_readonly:
                     self.store.market(market)
                     if market_received is not None and book_needed(market, market_received):
                         try:
@@ -199,9 +205,12 @@ class Engine:
                     multiplier=fee_multiplier(series)
                     if fetched_book:
                         self.store.quote(market.ticker,at.isoformat(),book,multiplier,book_received.isoformat() if book_received else None)
-                    if multiplier is not None and fetched_book and book_received and (at-book_received).total_seconds()<=self.age:
-                        entry(self.store,market,p,book,at,remaining,risk,multiplier,enabled,allow_proxy)
                 except ValueError as e:error=str(e)
+                if not self.store.legacy_readonly:
+                    try:
+                        step_execution(self.store,market,prediction['probability'] if prediction else None,book,book_received,at,risk,fee_multiplier(series),enabled,allow_proxy,self.age,self.min_latency,self.max_intent_age,bool(fetched_book and book_received is not None))
+                    except Exception:
+                        logging.exception('Paper execution step failed')
                 with self.lock:self.state.update(market=market,tick=tick,candles=candles,book=book,trades=trades,prediction=prediction,error=error,book_error=book_error,series=series,updated=at,market_received=market_received,book_received=book_received,latency_ms=(time.monotonic()-started)*1000)
                 if time.monotonic()>=next_settle:
                     for ticker in self.store.pending():

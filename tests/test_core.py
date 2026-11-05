@@ -125,6 +125,7 @@ def test_book_and_fee_guards():
     assert book_needed(market(floor_strike=None),AT) is False
     assert fee_multiplier(None) is None
     assert fee_multiplier({'fee_type':'quadratic','fee_multiplier':1})==1
+    assert fee_multiplier({'fee_type':'quadratic_with_maker_fees','fee_multiplier':1})==1
     assert fee_multiplier({'fee_type':'flat','fee_multiplier':1}) is None
     assert fee_multiplier({'fee_type':'quadratic','fee_multiplier':0}) is None
 

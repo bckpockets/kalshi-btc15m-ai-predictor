@@ -36,6 +36,13 @@ def economics(probability,price,quantity=1,multiplier=1.):
     return {'fee':f,'cost':cost,'win_profit':quantity-cost,'loss':cost,'ev':quantity*probability-cost,'break_even':cost/quantity,'edge':probability-cost/quantity}
 
 def entry(store,m,p,book,at,remaining,risk,fee_multiplier,enabled=False,quality_ok=False):
+    """Legacy same-snapshot fill. Engine does not call this.
+
+    Rows written here have no taker-confirm manifest. A database that already
+    has a run manifest, or a legacy file opened read-only, is left unchanged.
+    """
+    if getattr(store,'legacy_readonly',False): return None
+    if getattr(store,'manifest_present',lambda: False)(): return None
     if not enabled or not quality_ok or remaining<risk.cutoff: return None
     candidates=[]
     for side,prob,bid in [('yes',p,m.yes_bid_dollars),('no',1-p,m.no_bid_dollars)]:
