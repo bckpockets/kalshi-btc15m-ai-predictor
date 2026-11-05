@@ -49,4 +49,4 @@ These are independent of Kalshi. Prices below are what their public pages showed
 
 No account was created, no key was used, and nothing was purchased. The running paper process and its database were not changed. A prospective recorder was not deployed.
 
-A recorder that would cover later contracts, and only later contracts, would append the public `orderbook_fp` ladders the collector already fetches for the active ticker, with the local receive time, into a new file that is not the paper database. It cannot reconstruct Nov 4–5. It would still be a sampled book, not proof of a queue position or of a trade at that size. It should not be turned on without a separate request.
+A separate recorder for later contracts is implemented in `research/depth_recorder.py` and described in [DEPTH_RECORDER.md](DEPTH_RECORDER.md). It writes its own append-only files and does not attach to the paper process. It cannot reconstruct Nov 4–5. A stored ladder is still not a queue position or a trade. The 24-hour process is started by the runtime executor, not by this change.

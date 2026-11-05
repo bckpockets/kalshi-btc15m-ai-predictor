@@ -15,4 +15,5 @@ runtime.sqlite*
 artifacts/
 *.joblib
 data/historical/
+data/depth-prospective/
 .DS_Store
