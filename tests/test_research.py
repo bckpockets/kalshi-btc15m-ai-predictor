@@ -1,6 +1,7 @@
 """Synthetic unit-test fixtures only; never market history or claimed accuracy."""
 import numpy as np
 import pandas as pd
+import pytest
 from btc15.features import FEATURES
 from btc15.model import Predictor
 from research.train import train
@@ -25,3 +26,7 @@ def test_historical_builder_rejects_future_threshold():
     with pytest.raises(ValueError,match='threshold leakage'):build(c,s,o)
     s['threshold_published_at']=AT-pd.Timedelta(minutes=5)
     result=build(c,s,o);assert len(result)==1;assert 0<=result.baseline.iloc[0]<=1
+    from btc15.model import statistical
+    # Builder passes the official threshold; half-cent is applied once inside statistical().
+    expect=statistical(100001,100000,float(result.sigma.iloc[0]),300)['probability']
+    assert result.baseline.iloc[0]==pytest.approx(expect)

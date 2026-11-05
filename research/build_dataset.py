@@ -16,7 +16,8 @@ def build(candles,snapshots,outcomes):
         remaining=(r.close_time-r.timestamp).total_seconds()
         if remaining<60:continue
         f=build_features(c,r.timestamp,r.price,r.threshold,remaining,r.get('imbalance',0),r.get('pressure',0))
-        stats=statistical(r.price,r.threshold-.005,f['sigma'],remaining)
+        # Official threshold. statistical() applies the half-cent boundary once.
+        stats=statistical(r.price,r.threshold,f['sigma'],remaining)
         rows.append({**r.to_dict(),**f,'baseline':stats['probability']})
     if not rows:raise ValueError('No eligible pre-final-minute snapshots')
     outcomes=outcomes[['ticker','label','resolved_at']]

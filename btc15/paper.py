@@ -1,3 +1,17 @@
+"""Virtual fees, edge and risk limits. No order submission and no paid API.
+
+Quadratic fee, used when the series reports fee_type=quadratic:
+
+    fee = ceil_to_cent(0.07 × quantity × price × (1 − price) × multiplier)
+
+`economics()['edge']` is expected profit per contract (payout is $1), which is
+what `Risk.min_ev` compares against. `ev` is that quantity times contract count.
+
+Risk defaults match the sidebar and README: stake $10, 2% of cash, $0.03
+minimum EV per contract, $0.10 maximum spread, depth 10, one entry per
+interval, 90-second cutoff. STARTING_BANKROLL ($1000) is the new-account
+initial in Store, not a field on Risk.
+"""
 from dataclasses import dataclass
 from decimal import Decimal, ROUND_CEILING
 import math

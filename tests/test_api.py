@@ -13,6 +13,19 @@ def test_fixed_point_book_and_pagination():
     assert k.markets()==[];assert len(seen)==3
     assert '/trade-api/v2/markets' in seen[0]
 
+def test_market_list_cache_skips_repeat_gets():
+    calls={'n':0}
+    def handler(req):
+        calls['n']+=1
+        return httpx.Response(200,json={'markets':[],'cursor':''})
+    k=Kalshi('https://example.com/trade-api/v2', list_ttl=60)
+    k.client.close();k.client=httpx.Client(base_url='https://example.com/trade-api/v2',transport=httpx.MockTransport(handler))
+    assert k.markets()==[]
+    assert k.markets()==[]
+    assert calls['n']==1
+    assert k.markets(force=True)==[]
+    assert calls['n']==2
+
 def test_coinbase_candle_end_timestamp():
     c=Coinbase();c.client.close();c.client=httpx.Client(base_url='https://example.com',transport=httpx.MockTransport(lambda r:httpx.Response(200,json=[[1000,1,3,2,2.5,10]])))
     assert c.candles().timestamp.iloc[0].timestamp()==1060

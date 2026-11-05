@@ -1,4 +1,5 @@
 import json
+import logging
 import sqlite3
 import threading
 import pandas as pd
@@ -38,10 +39,34 @@ class Store:
         with self.lock,self.db:
             self.db.execute('INSERT OR IGNORE INTO predictions VALUES(?,?,?,?,?,?,?,?,?,?)',tuple(p[k] for k in ['ticker','timestamp','close_time','probability','baseline','ml','market_probability','remaining','version'])+(json.dumps(p['features']),))
     def observation(self,t):
+        self.observations([t])
+    def observations(self,ticks):
+        if not ticks:return
+        rows=[]
+        for t in ticks:
+            ts=t['timestamp']
+            rows.append((t['trade_id'], ts.isoformat() if hasattr(ts,'isoformat') else str(ts), json.dumps(t,default=str)))
         with self.lock,self.db:
-            self.db.execute('INSERT OR IGNORE INTO observations VALUES(?,?,?)',(t['trade_id'],t['timestamp'].isoformat(),json.dumps(t,default=str)))
-    def pending(self):
-        return self.frame('SELECT ticker FROM markets WHERE ticker NOT IN (SELECT ticker FROM resolutions)').ticker.tolist()
+            self.db.executemany('INSERT OR IGNORE INTO observations VALUES(?,?,?)', rows)
+    def pending(self, at=None):
+        """Unresolved markets already at or past close_time.
+
+        Currently open contracts are not settlement candidates. Polling them
+        forever was a request leak; they stay out of this list until close_time.
+        """
+        from btc15.domain import utc, now as domain_now
+        cutoff=domain_now() if at is None else utc(at)
+        with self.lock:
+            rows=self.db.execute('SELECT ticker, raw FROM markets WHERE ticker NOT IN (SELECT ticker FROM resolutions) ORDER BY ticker').fetchall()
+        found=[]
+        for ticker, raw in rows:
+            try:
+                close=utc(json.loads(raw)['close_time'])
+            except (KeyError, TypeError, ValueError, json.JSONDecodeError):
+                logging.warning('Market %s has no readable close_time; not a settlement candidate', ticker)
+                continue
+            if close<=cutoff:found.append(ticker)
+        return found
     def settle(self,ticker,label,at):
         if label not in (0,1): raise ValueError('Official binary result required')
         with self.lock,self.db:
