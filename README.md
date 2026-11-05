@@ -99,14 +99,14 @@ flowchart TD
 
 ## Data, training and evaluation
 
-No legitimate labeled training archive was supplied, so no model artifact is bundled. At least 100 resolved contracts are required to run fitting; this is a mechanical minimum, **not evidence of reliability**. Prefer thousands of contracts spanning volatility regimes and independently held-out dates. Repeated snapshots within a contract are correlated.
+No model artifact is bundled. A bounded public sample can be downloaded with the commands in [docs/HISTORICAL.md](docs/HISTORICAL.md). That sample is a predictive study only: Coinbase candles are not BRTI, and missing order-book depth means there is no executable backtest. At least 100 resolved contracts are required to run fitting; this is a mechanical minimum, **not evidence of reliability**. Prefer thousands of contracts spanning volatility regimes and independently held-out dates. Repeated snapshots within a contract are correlated. The walk-forward command writes a JSON report and does not install a model.
 
 As the app runs it stores prediction features, top-of-book quotes from cycles that fetched a book, and official results in SQLite. Coinbase prints stay in memory for the live pressure window and are persisted at most once per exchange-timestamp second, in batches. Export resolved observations:
 
 ```bash
 python -m research.dataset runtime.sqlite dataset.csv
 python -m research.train dataset.csv --output artifacts/model.joblib
-# Or expanding-window reports, requiring at least 250 contracts:
+# Expanding-window report, requiring at least 250 contracts. Does not write a model file.
 python -m research.walk_forward dataset.csv --output artifacts
 ```
 

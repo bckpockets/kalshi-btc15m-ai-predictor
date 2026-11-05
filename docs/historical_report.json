@@ -1,0 +1,485 @@
+{
+  "kind": "predictive_backtest_not_execution",
+  "artifact_written": false,
+  "model_path": null,
+  "paper_configuration_changed": false,
+  "executable_simulation": "refused",
+  "executable_reason": "No historical order-book depth, quote timestamp, or fee multiplier was collected. Candle closes are not fills.",
+  "contracts": 160,
+  "rows": 480,
+  "label_counts": {
+    "0": 89,
+    "1": 71
+  },
+  "time_start": "2026-11-04 05:20:00+00:00",
+  "time_end": "2026-11-05 23:12:00+00:00",
+  "coverage": {
+    "planned": 480,
+    "missing_candle": 0,
+    "feature_rejected": 0,
+    "rows": 480,
+    "contracts": 160,
+    "collector": {
+      "source_markets": "https://external-api.kalshi.com/trade-api/v2/markets?series_ticker=KXBTC15M&status=settled",
+      "source_cutoff": "https://external-api.kalshi.com/trade-api/v2/historical/cutoff",
+      "source_candles": "https://api.exchange.coinbase.com/products/BTC-USD/candles",
+      "cutoff": {
+        "market_positions_last_updated_ts": "2026-09-06T00:00:00Z",
+        "market_settled_ts": "2026-09-06T00:00:00Z",
+        "orders_updated_ts": "2026-10-22T00:00:00Z",
+        "trades_created_ts": "2026-09-06T00:00:00Z"
+      },
+      "fetched_at": "2026-11-05T23:30:18.392684+00:00",
+      "requests": 10,
+      "pages": 0,
+      "next_cursor_saved": false,
+      "markets_fetched": 160,
+      "decisions": {
+        "accept": 160
+      },
+      "accepted": 160,
+      "candle_rows": 2671,
+      "candle_gaps_over_90s": 0,
+      "candle_start": "2026-11-04 02:46:00+00:00",
+      "candle_end": "2026-11-05 23:16:00+00:00",
+      "collection_log": "2026-11-05T23:29:44Z: GET /historical/cutoff plus two pages of settled KXBTC15M markets (160 contracts). A candle-loop bug stopped after one 280-minute chunk and was fixed before the study. 2026-11-05T23:30:18Z: market cache reused, 10 Coinbase requests, 2671 one-minute rows. The pages field below is 0 because that second run did not repeat the market pages.",
+      "notes": [
+        "Settled payload bid/ask and expiration_value are stored in the raw cache only.",
+        "They are not point-in-time quotes and are not labels.",
+        "Coinbase closes are proxy prices, not BRTI and not settlement."
+      ]
+    }
+  },
+  "imbalance_and_pressure": "missing; builder uses neutral zero. This is not a measured book.",
+  "threshold_assumption": "floor_strike from the settled market, treated as knowable at open_time because the rules define it as the pre-open average. No separate publication tape was available.",
+  "readiness": "not_ready",
+  "readiness_reasons": [
+    "Coinbase prices are a proxy, not CF Benchmarks BRTI, and are not the settlement index.",
+    "Official labels are Kalshi yes/no only. expiration_value was not used as a feature or a label.",
+    "No executable quotes were available, so this is not a trading simulation.",
+    "The sample is one short recent window. A lower Brier on that window is not an accuracy claim.",
+    "No model file is written. The live paper process and MODEL_PATH are unchanged."
+  ],
+  "frame_fingerprint": "596d1cb24797b7536e9951c4299519cacbb4b5c384dfcf5c3c98cb8c3fd3dd48",
+  "folds": [
+    {
+      "test_contracts": 32,
+      "train_contracts": 96,
+      "baselines": {
+        "baseline": {
+          "snapshots": {
+            "n": 96,
+            "accuracy": 0.8541666666666666,
+            "brier": 0.10241961951666527,
+            "log_loss": 0.3280275132143435,
+            "precision": 0.8571428571428571,
+            "recall": 0.7692307692307693,
+            "confusion_matrix": [
+              [
+                52,
+                5
+              ],
+              [
+                9,
+                30
+              ]
+            ],
+            "ece": 0.09848278568713696
+          },
+          "last_per_contract": {
+            "n": 32,
+            "accuracy": 0.96875,
+            "brier": 0.05724356263285034,
+            "log_loss": 0.20916196348947816,
+            "precision": 1.0,
+            "recall": 0.9230769230769231,
+            "confusion_matrix": [
+              [
+                19,
+                0
+              ],
+              [
+                1,
+                12
+              ]
+            ],
+            "ece": 0.1347601465762349
+          }
+        },
+        "constant_half": {
+          "snapshots": {
+            "n": 96,
+            "accuracy": 0.40625,
+            "brier": 0.25,
+            "log_loss": 0.6931471805599453,
+            "precision": 0.40625,
+            "recall": 1.0,
+            "confusion_matrix": [
+              [
+                0,
+                57
+              ],
+              [
+                0,
+                39
+              ]
+            ],
+            "ece": 0.09375
+          },
+          "last_per_contract": {
+            "n": 32,
+            "accuracy": 0.40625,
+            "brier": 0.25,
+            "log_loss": 0.6931471805599453,
+            "precision": 0.40625,
+            "recall": 1.0,
+            "confusion_matrix": [
+              [
+                0,
+                19
+              ],
+              [
+                0,
+                13
+              ]
+            ],
+            "ece": 0.09375
+          }
+        },
+        "train_base_rate": {
+          "snapshots": {
+            "n": 96,
+            "accuracy": 0.40625,
+            "brier": 0.25,
+            "log_loss": 0.6931471805599453,
+            "precision": 0.40625,
+            "recall": 1.0,
+            "confusion_matrix": [
+              [
+                0,
+                57
+              ],
+              [
+                0,
+                39
+              ]
+            ],
+            "ece": 0.09375
+          },
+          "last_per_contract": {
+            "n": 32,
+            "accuracy": 0.40625,
+            "brier": 0.25,
+            "log_loss": 0.6931471805599453,
+            "precision": 0.40625,
+            "recall": 1.0,
+            "confusion_matrix": [
+              [
+                0,
+                19
+              ],
+              [
+                0,
+                13
+              ]
+            ],
+            "ece": 0.09375
+          }
+        }
+      },
+      "ml": null,
+      "bootstrap_brier": {
+        "baseline": {
+          "p05": 0.0704446030097309,
+          "p50": 0.10219721270103217,
+          "p95": 0.135026268266921,
+          "draws": 400,
+          "unit": "contract"
+        },
+        "constant_half": {
+          "p05": 0.25,
+          "p50": 0.25,
+          "p95": 0.25,
+          "draws": 400,
+          "unit": "contract"
+        },
+        "train_base_rate": {
+          "p05": 0.25,
+          "p50": 0.25,
+          "p95": 0.25,
+          "draws": 400,
+          "unit": "contract"
+        }
+      },
+      "baseline_minus_half": {
+        "left": "baseline",
+        "right": "constant_half",
+        "p05": -0.17701956082421275,
+        "p50": -0.14867748087498606,
+        "p95": -0.11087632027745349,
+        "draws": 400,
+        "covers_zero": false
+      }
+    },
+    {
+      "test_contracts": 32,
+      "train_contracts": 128,
+      "baselines": {
+        "baseline": {
+          "snapshots": {
+            "n": 96,
+            "accuracy": 0.7291666666666666,
+            "brier": 0.1810512121271668,
+            "log_loss": 0.5273583240894709,
+            "precision": 0.5666666666666667,
+            "recall": 0.5666666666666667,
+            "confusion_matrix": [
+              [
+                53,
+                13
+              ],
+              [
+                13,
+                17
+              ]
+            ],
+            "ece": 0.12634054280642107
+          },
+          "last_per_contract": {
+            "n": 32,
+            "accuracy": 0.875,
+            "brier": 0.12003909937899303,
+            "log_loss": 0.3782589233843918,
+            "precision": 1.0,
+            "recall": 0.6,
+            "confusion_matrix": [
+              [
+                22,
+                0
+              ],
+              [
+                4,
+                6
+              ]
+            ],
+            "ece": 0.11327831342376646
+          }
+        },
+        "constant_half": {
+          "snapshots": {
+            "n": 96,
+            "accuracy": 0.3125,
+            "brier": 0.25,
+            "log_loss": 0.6931471805599453,
+            "precision": 0.3125,
+            "recall": 1.0,
+            "confusion_matrix": [
+              [
+                0,
+                66
+              ],
+              [
+                0,
+                30
+              ]
+            ],
+            "ece": 0.1875
+          },
+          "last_per_contract": {
+            "n": 32,
+            "accuracy": 0.3125,
+            "brier": 0.25,
+            "log_loss": 0.6931471805599453,
+            "precision": 0.3125,
+            "recall": 1.0,
+            "confusion_matrix": [
+              [
+                0,
+                22
+              ],
+              [
+                0,
+                10
+              ]
+            ],
+            "ece": 0.1875
+          }
+        },
+        "train_base_rate": {
+          "snapshots": {
+            "n": 96,
+            "accuracy": 0.6875,
+            "brier": 0.24176025390625,
+            "log_loss": 0.6766560055341682,
+            "precision": 0.0,
+            "recall": 0.0,
+            "confusion_matrix": [
+              [
+                66,
+                0
+              ],
+              [
+                30,
+                0
+              ]
+            ],
+            "ece": 0.1640625
+          },
+          "last_per_contract": {
+            "n": 32,
+            "accuracy": 0.6875,
+            "brier": 0.24176025390625,
+            "log_loss": 0.6766560055341682,
+            "precision": 0.0,
+            "recall": 0.0,
+            "confusion_matrix": [
+              [
+                22,
+                0
+              ],
+              [
+                10,
+                0
+              ]
+            ],
+            "ece": 0.1640625
+          }
+        }
+      },
+      "ml": {
+        "weight": 0.0,
+        "holdout_contracts": 32,
+        "models": {
+          "baseline": {
+            "n": 32,
+            "accuracy": 0.875,
+            "brier": 0.12003909937899303,
+            "log_loss": 0.3782589233843918,
+            "precision": 1.0,
+            "recall": 0.6,
+            "confusion_matrix": [
+              [
+                22,
+                0
+              ],
+              [
+                4,
+                6
+              ]
+            ],
+            "ece": 0.11327831342376646
+          },
+          "constant_half": {
+            "n": 32,
+            "accuracy": 0.3125,
+            "brier": 0.25,
+            "log_loss": 0.6931471805599453,
+            "precision": 0.3125,
+            "recall": 1.0,
+            "confusion_matrix": [
+              [
+                0,
+                22
+              ],
+              [
+                0,
+                10
+              ]
+            ],
+            "ece": 0.1875
+          },
+          "train_base_rate": {
+            "n": 32,
+            "accuracy": 0.3125,
+            "brier": 0.2521383032445399,
+            "log_loss": 0.6974239683601104,
+            "precision": 0.3125,
+            "recall": 1.0,
+            "confusion_matrix": [
+              [
+                0,
+                22
+              ],
+              [
+                0,
+                10
+              ]
+            ],
+            "ece": 0.1931179775280899
+          },
+          "ml": {
+            "n": 32,
+            "accuracy": 0.84375,
+            "brier": 0.1598936204058987,
+            "log_loss": 0.5042539035921912,
+            "precision": 1.0,
+            "recall": 0.5,
+            "confusion_matrix": [
+              [
+                22,
+                0
+              ],
+              [
+                5,
+                5
+              ]
+            ],
+            "ece": 0.181301842443645
+          },
+          "ensemble": {
+            "n": 32,
+            "accuracy": 0.875,
+            "brier": 0.12003909937899303,
+            "log_loss": 0.3782589233843918,
+            "precision": 1.0,
+            "recall": 0.6,
+            "confusion_matrix": [
+              [
+                22,
+                0
+              ],
+              [
+                4,
+                6
+              ]
+            ],
+            "ece": 0.11327831342376646
+          }
+        }
+      },
+      "bootstrap_brier": {
+        "baseline": {
+          "p05": 0.1330649635428852,
+          "p50": 0.18137226374631382,
+          "p95": 0.2319309124255385,
+          "draws": 400,
+          "unit": "contract"
+        },
+        "constant_half": {
+          "p05": 0.25,
+          "p50": 0.25,
+          "p95": 0.25,
+          "draws": 400,
+          "unit": "contract"
+        },
+        "train_base_rate": {
+          "p05": 0.23590087890625,
+          "p50": 0.24176025390625,
+          "p95": 0.24761962890625,
+          "draws": 400,
+          "unit": "contract"
+        }
+      },
+      "baseline_minus_half": {
+        "left": "baseline",
+        "right": "constant_half",
+        "p05": -0.11328657715706279,
+        "p50": -0.06988876248663428,
+        "p95": -0.020017555339245055,
+        "draws": 400,
+        "covers_zero": false
+      },
+      "ml_note": "Held-out scores only. Weight was chosen on the blend contracts, not on this test. Artifact was not saved."
+    }
+  ]
+}
