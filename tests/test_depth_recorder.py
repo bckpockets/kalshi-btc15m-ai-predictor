@@ -146,7 +146,8 @@ def test_rotation_gzip_matches_and_until_stops(tmp_path):
     assert gz
     loaded, skipped = read_records(tmp_path)
     assert skipped == 0
-    assert [row['event'] for row in loaded[:1]] == ['started']
+    events=[row['event'] for row in loaded]
+    assert events[0]=='manifest' and 'started' in events
     assert loaded[-1]['event'] == 'stopped' and loaded[-1]['reason'] == 'until'
     assert any(row['event'] == 'snapshot' and row['orderbook_fp']['yes_dollars'][0][1] == '1.00' for row in loaded)
 

@@ -18,6 +18,7 @@ import time
 from pathlib import Path
 import httpx
 from btc15.domain import Market, active_market, utc
+from research.runner import LockBusy, WriterLock, dependency_manifest, write_heartbeat
 
 SCHEMA = 'depth-snapshot-v1'
 DEFAULT_BASE = 'https://external-api.kalshi.com/trade-api/v2'
@@ -285,6 +286,8 @@ class Recorder:
         self.metadata_seconds = float(metadata_seconds)
         self.slow_response_ms = float(slow_response_ms)
         self.store = Store(output, segment_bytes=segment_bytes, max_total_bytes=max_total_bytes)
+        self.lock = WriterLock(self.store.root)
+        self.lock.acquire()
         self.markets = []
         self.metadata = None
         self.metadata_at = None
@@ -294,6 +297,36 @@ class Recorder:
         self.stop = False
     def close(self):
         self.store.close()
+        if self.lock is not None:
+            self.lock.release()
+            self.lock = None
+    def _heartbeat(self):
+        write_heartbeat(self.store.root, {
+            'schema': 'runner-heartbeat-v1',
+            'at': self.clock.wall().isoformat(),
+            'pid': os.getpid(),
+            'local_seq': self.store.state.get('local_seq'),
+            'last_ticker': self.store.state.get('last_ticker'),
+            'last_received_at': self.store.state.get('last_received_at'),
+        })
+    def note_gap(self, gap_seconds):
+        previous = self.store.state.get('last_received_at')
+        if not previous:
+            return None
+        delta = (self.clock.wall() - utc(previous)).total_seconds()
+        if delta <= gap_seconds:
+            return None
+        record = {
+            'schema': SCHEMA,
+            'event': 'gap',
+            'fail_closed': True,
+            'previous_received_at': previous,
+            'resumed_at': self.clock.wall().isoformat(),
+            'gap_seconds': delta,
+            'note': 'No snapshots were invented for the missing interval.',
+        }
+        self.store.append(record)
+        return record
     def _control(self, event, **extra):
         record = {'schema': SCHEMA, 'event': event, 'at': self.clock.wall().isoformat(), **extra}
         return self.store.append(record)
@@ -391,9 +424,12 @@ class Recorder:
         if call.get('ok') and flags['malformed']:
             record['raw_orderbook_fp'] = (call.get('body') or {}).get('orderbook_fp')
         wrote = self.store.append(record)
+        if received:
+            self.store.state['last_received_at'] = received
         if ticker:
             self.store.state['last_ticker'] = ticker
-            self.store._save_state()
+        self.store._save_state()
+        self._heartbeat()
         if not wrote:
             self._control('stopped', reason='max_bytes')
             self.stop = True
@@ -405,7 +441,10 @@ class Recorder:
                 self.stop = True
             signal.signal(signal.SIGINT, _stop)
             signal.signal(signal.SIGTERM, _stop)
+        self.note_gap(max(self.poll_seconds * 5, 30))
+        self.store.append(dependency_manifest({'until': until.isoformat(), 'poll_seconds': self.poll_seconds}))
         self._control('started', until=until.isoformat(), poll_seconds=self.poll_seconds)
+        self._heartbeat()
         reason = 'until'
         while not self.stop and self.clock.wall() < until:
             self.step()
@@ -422,7 +461,7 @@ class Recorder:
         if self.clock.wall() >= until and not self.stop:
             reason = 'until'
         self._control('stopped', reason=reason)
-        self.store.close()
+        self.close()
         return reason
 
 def main(argv=None):
@@ -441,7 +480,11 @@ def main(argv=None):
     output = assert_output_safe(args.output)
     until = parse_until(args.until)
     client = RestClient(args.base_url)
-    recorder = Recorder(output, client, poll_seconds=args.poll_seconds, metadata_seconds=args.metadata_seconds, segment_bytes=args.segment_bytes, max_total_bytes=args.max_total_bytes, slow_response_ms=args.slow_response_ms)
+    try:
+        recorder = Recorder(output, client, poll_seconds=args.poll_seconds, metadata_seconds=args.metadata_seconds, segment_bytes=args.segment_bytes, max_total_bytes=args.max_total_bytes, slow_response_ms=args.slow_response_ms)
+    except LockBusy:
+        client.close()
+        raise SystemExit(2)
     try:
         reason = recorder.run(until)
     finally:
