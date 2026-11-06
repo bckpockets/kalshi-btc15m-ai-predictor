@@ -278,6 +278,30 @@ def read_records(root):
                     skipped += 1
     return records, skipped
 
+def last_recorded_receive(root):
+    """Latest response_received_at that parses on an existing segment line.
+
+    The string returned is copied from that line. A missing or unparsable
+    value is skipped. Nothing is invented when no line qualifies. bae7cc4
+    state.json has no last_received_at, so this scan is what makes a later
+    resume see the last snapshot.
+    """
+    records, _skipped = read_records(root)
+    latest = None
+    latest_raw = None
+    for record in records:
+        raw = record.get('response_received_at')
+        if not isinstance(raw, str) or not raw.strip():
+            continue
+        try:
+            moment = utc(raw)
+        except (TypeError, ValueError, OverflowError):
+            continue
+        if latest is None or moment > latest:
+            latest = moment
+            latest_raw = raw
+    return latest_raw
+
 class Recorder:
     def __init__(self, output, client, clock=None, poll_seconds=3.0, metadata_seconds=60.0, segment_bytes=8 * 1024 * 1024, max_total_bytes=512 * 1024 * 1024, slow_response_ms=5000.0):
         self.clock = clock or Clock()
@@ -310,7 +334,7 @@ class Recorder:
             'last_received_at': self.store.state.get('last_received_at'),
         })
     def note_gap(self, gap_seconds):
-        previous = self.store.state.get('last_received_at')
+        previous = last_recorded_receive(self.store.root)
         if not previous:
             return None
         delta = (self.clock.wall() - utc(previous)).total_seconds()
@@ -321,6 +345,7 @@ class Recorder:
             'event': 'gap',
             'fail_closed': True,
             'previous_received_at': previous,
+            'previous_source': 'segment_response_received_at',
             'resumed_at': self.clock.wall().isoformat(),
             'gap_seconds': delta,
             'note': 'No snapshots were invented for the missing interval.',

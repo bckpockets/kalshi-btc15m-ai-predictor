@@ -116,6 +116,9 @@ def main(argv=None):
     print(json.dumps(result))
     raise SystemExit(0 if result['reason'] == 'child_exit_0' else 1)
 
+if __name__ == '__main__':
+    main()
+
 def supervise(argv, until, sleep=time.sleep, spawn=None, now=None, max_backoff=30.0, initial_backoff=1.0):
     """Restart a child until `until`, except a clean exit or a busy lock.
 

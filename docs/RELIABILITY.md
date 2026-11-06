@@ -26,9 +26,9 @@ In-guest `nohup` cannot promise survival across that kind of replacement.
 - One exclusive `flock` on the output directory. A second writer exits **2** and is not replaced.
 - `runner-manifest-v1` records Python, `httpx` version, platform, git commit if `git` works, and pid. It does not pin the host image.
 - `runner-heartbeat-v1` is rewritten after snapshots (pid, seq, ticker, last receive time).
-- If the previous receive time is more than `max(5 × poll, 30)` seconds before a new process starts, the new process appends a `gap` record with `fail_closed: true`. It does not invent the missing polls.
-- Restart helper `python -m research.supervise` retries a **depth** child with backoff capped at 30 seconds until `--until`, and stops on exit 0 or on lock-busy exit 2. It does not run after the machine is gone.
-- `scripts/resume-after-wake.sh` is dry by default. `--restore-venv` recreates only a missing venv from `requirements.lock` with `pip install --require-hashes` and does not fall back to unpinned `requirements.txt`. `--check-lock` is a dry-run of that install. `--start-depth` needs an explicit `--until`. The script never deletes a sqlite file, never resets a bankroll, never arms fills, and never passes `--attach`.
+- If the last parsed segment `response_received_at` is more than `max(5 × poll, 30)` seconds before a new process starts, the new process appends a `gap` record with `fail_closed: true`. That timestamp is copied from the segment line. `resumed_at` is the process clock. Missing polls are not invented. A `state.json` from `bae7cc4` has no `last_received_at`; the scan still finds the last snapshot. If no line parses, no gap row is written.
+- Restart command is `python -m research.runner`. There is no `research.supervise` module. It retries a depth child with backoff capped at 30 seconds until `--until`, and stops on exit 0 or on lock-busy exit 2. It does not run after the machine is gone.
+- `scripts/resume-after-wake.sh` uses `$VENV/bin/python` when that file is executable, and `python3` only when it is not. `--dry-run` prints the depth command and does not execute it. `--restore-venv` recreates only a missing venv from `requirements.lock` with `pip install --require-hashes` and does not fall back to unpinned `requirements.txt`. `--check-lock` is a dry-run of that install. `--start-depth` needs an explicit `--until`. The script never deletes a sqlite file, never resets a bankroll, never arms fills, and never passes `--attach`.
 
 Paper execution stays `taker-confirm-v1`. Settlement code is unchanged. A new process that opens the existing database uses the existing manifest; `start_run` does not rewrite baseline cash when the manifest row is already there.
 
@@ -48,11 +48,12 @@ scripts/resume-after-wake.sh --check-lock
 # python after the boot was 3.13.5. Hashes pin packages, not that interpreter.
 scripts/resume-after-wake.sh --restore-venv
 
-# only if a new recording interval is wanted, and only when paper preflight
-# was not requested or it passed
-scripts/resume-after-wake.sh --start-depth --until 2026-11-07T23:20:00Z \
+# print the depth command. Does not exec it.
+scripts/resume-after-wake.sh --dry-run --start-depth --until 2026-11-07T23:20:00Z \
   --depth-dir "$HOME/kalshi-depth-prospective"
 ```
+
+The printed depth command is `"$VENV/bin/python" -m research.runner --until … -- "$VENV/bin/python" -m research.depth_recorder …`. The operator's separate `DOWNTIME_GAP.json` records the hole from the last depth receive `2026-11-06T21:06:50Z` to resume `2026-11-06T21:56:17Z`. This repository does not read that file and does not copy those clock values into a gap row. A new recorder copies `previous_received_at` from the last segment line that parses.
 
 `/workspace/kalshi-paper-taker/run_taker.py` in the archive exits if `runtime.sqlite` already exists, then writes a new baseline and arms. It is the kickoff tool. It is not the resume tool. Do not delete the sqlite file to make that script run again.
 

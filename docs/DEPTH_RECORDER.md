@@ -42,7 +42,7 @@ From the first snapshot's receive time through `2026-11-06T23:20:00Z` is about 8
 
 The runtime executor starts this. It was not started here as a 24-hour job.
 
-- One process, one output directory. The recorder takes an exclusive lock on that directory. A second writer exits 2. `python -m research.supervise --until UTC -- python -m research.depth_recorder ...` restarts only that child until `--until`, and does not replace a busy lock. A resume after a gap appends a `gap` record and does not invent the missing polls. The 2026-11-06 archive ends at receive time `2026-11-06T21:06:50Z` with no `stopped` record.
+- One process, one output directory. The recorder takes an exclusive lock on that directory. A second writer exits 2. `python -m research.runner --until UTC -- python -m research.depth_recorder ...` restarts only that child until `--until`, and does not replace a busy lock. There is no `research.supervise` module. A resume appends a `gap` only when a segment line has a parsable `response_received_at` older than the gap threshold. The string is copied from that line. `bae7cc4` `state.json` does not store `last_received_at`. The 2026-11-06 archive's last receive time is `2026-11-06T21:06:50Z`, with no `stopped` record.
 - Same Python environment as the repo (`httpx` is already a dependency). No API key and no third-party data account.
 - Network egress to `https://external-api.kalshi.com`.
 - Do not restart the paper runner. Do not set `DATABASE_PATH` or `MODEL_PATH` for this process.

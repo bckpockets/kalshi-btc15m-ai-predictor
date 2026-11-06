@@ -42,6 +42,44 @@ def test_restart_gap_does_not_invent_snapshots(tmp_path):
     assert any(row['event'] == 'gap' for row in records)
     assert (tmp_path / 'heartbeat.json').exists()
 
+def test_legacy_state_without_last_received_at_uses_the_segment(tmp_path):
+    """bae7cc4 state.json has no last_received_at. The gap must copy a real receive time."""
+    import gzip
+    received = '2026-11-06T21:06:50.278633Z'
+    earlier = '2026-11-06T21:00:00Z'
+    with gzip.open(tmp_path / 'segment-0001.jsonl.gz', 'wt', encoding='utf-8') as handle:
+        handle.write(json.dumps({'event': 'snapshot', 'response_received_at': earlier, 'local_seq': 1}) + '\n')
+        handle.write(json.dumps({'event': 'snapshot', 'response_received_at': 'not-a-time', 'local_seq': 2}) + '\n')
+        handle.write(json.dumps({
+            'event': 'snapshot', 'schema': 'depth-snapshot-v1', 'local_seq': 5955,
+            'response_received_at': received, 'ticker': 'KXBTC15M-26NOV061615-15',
+        }) + '\n')
+    (tmp_path / 'state.json').write_text(json.dumps({
+        'local_seq': 5956, 'active': None, 'segments': [], 'next_index': 1,
+        'last_ticker': 'KXBTC15M-26NOV061615-15', 'compressed': ['segment-0001.jsonl.gz'],
+    }))
+    clock = FakeClock()
+    clock.now = datetime(2026, 11, 6, 21, 56, 17, tzinfo=timezone.utc)
+    recorder = Recorder(tmp_path, Script([]), clock, metadata_seconds=3600)
+    assert 'last_received_at' not in recorder.store.state
+    gap = recorder.note_gap(30)
+    recorder.close()
+    assert gap['previous_received_at'] == received
+    assert gap['previous_source'] == 'segment_response_received_at'
+    assert gap['resumed_at'].startswith('2026-11-06T21:56:17')
+    assert gap['fail_closed'] is True
+    assert gap['gap_seconds'] > 2900
+    from research.depth_recorder import read_records
+    records, skipped = read_records(tmp_path)
+    assert skipped == 0
+    assert sum(row['event'] == 'snapshot' for row in records) == 3
+    assert sum(row['event'] == 'gap' for row in records) == 1
+    bare = tmp_path / 'empty'
+    bare.mkdir()
+    quiet = Recorder(bare, Script([]), clock)
+    assert quiet.note_gap(30) is None
+    quiet.close()
+
 def test_supervise_stops_on_clean_exit_and_on_a_busy_lock():
     class Child:
         def __init__(self, code):
