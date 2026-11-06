@@ -14,7 +14,7 @@ from btc15.features import build_features
 from btc15.model import statistical, Predictor, BASIS_SIGMA_USD
 from btc15.store import Store
 from btc15.paper import Risk
-from btc15.execution import step_execution, TAKER_FEE_TYPES, EXECUTION_MODEL, FEE_SCHEDULE
+from btc15.execution import coverage_allows_entry, step_execution, TAKER_FEE_TYPES, EXECUTION_MODEL, FEE_SCHEDULE
 
 def fee_multiplier(series):
     """Quadratic multiplier, or None if series metadata is missing or unsupported.
@@ -64,6 +64,7 @@ class Engine:
         version=self.model.artifact['version'] if self.model.artifact else 'statistical-proxy-v1'
         self.execution=self.store.start_run({'execution_model':EXECUTION_MODEL,'fee_schedule':FEE_SCHEDULE,'model_version':version,'model_path':os.getenv('MODEL_PATH','artifacts/model.joblib'),'database_path':self.store.path,'poll_seconds':self.poll,'max_data_age':self.age,'min_latency_seconds':self.min_latency,'max_intent_seconds':self.max_intent_age,'basis_sigma_usd':os.getenv('BASIS_SIGMA_USD','25'),'note':'Coinbase is not BRTI. No orders are submitted. Fills require a later book.'})
         self.state['execution']=self.execution
+        self._last_forecast_at=None
         self.threads=[threading.Thread(target=self.run,daemon=True),threading.Thread(target=lambda:asyncio.run(coinbase_stream(self.tick,self.stop)),daemon=True)]
         for t in self.threads:t.start()
         atexit.register(self.close)
@@ -206,9 +207,12 @@ class Engine:
                     if fetched_book:
                         self.store.quote(market.ticker,at.isoformat(),book,multiplier,book_received.isoformat() if book_received else None)
                 except ValueError as e:error=str(e)
+                coverage_ok=coverage_allows_entry(self._last_forecast_at, at, self.poll)
+                if prediction is not None:
+                    self._last_forecast_at=at
                 if not self.store.legacy_readonly:
                     try:
-                        step_execution(self.store,market,prediction['probability'] if prediction else None,book,book_received,at,risk,fee_multiplier(series),enabled,allow_proxy,self.age,self.min_latency,self.max_intent_age,bool(fetched_book and book_received is not None))
+                        step_execution(self.store,market,prediction['probability'] if prediction else None,book,book_received,at,risk,fee_multiplier(series),enabled,allow_proxy,self.age,self.min_latency,self.max_intent_age,bool(fetched_book and book_received is not None),coverage_ok)
                     except Exception:
                         logging.exception('Paper execution step failed')
                 with self.lock:self.state.update(market=market,tick=tick,candles=candles,book=book,trades=trades,prediction=prediction,error=error,book_error=book_error,series=series,updated=at,market_received=market_received,book_received=book_received,latency_ms=(time.monotonic()-started)*1000)

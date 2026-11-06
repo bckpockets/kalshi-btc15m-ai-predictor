@@ -188,7 +188,19 @@ def _touch(top, side):
         return top['yes_ask'], top['yes_ask_size']
     return top['no_ask'], top['no_ask_size']
 
-def propose(store, market, probability, book, decision_at, book_at, remaining, risk, multiplier, enabled, quality_ok, max_age):
+def coverage_allows_entry(previous_at, now, poll_seconds):
+    """Allow a new intent unless a prior success is older than the gap threshold.
+
+    The threshold is the same one the depth recorder uses: max(5 × poll, 30s).
+    No previous success means this is the first sample, not a detected hole.
+    This does not change a price, a fee, or a probability cutoff.
+    """
+    if previous_at is None:
+        return True
+    limit = max(float(poll_seconds) * 5.0, 30.0)
+    return (utc(now) - utc(previous_at)).total_seconds() <= limit
+
+def propose(store, market, probability, book, decision_at, book_at, remaining, risk, multiplier, enabled, quality_ok, max_age, coverage_ok=True):
     """Record a taker intent. Does not insert a position or move cash."""
     if getattr(store, 'legacy_readonly', False):
         return {'ok': False, 'reason': 'legacy_readonly'}
@@ -198,6 +210,8 @@ def propose(store, market, probability, book, decision_at, book_at, remaining, r
         return {'ok': False, 'reason': 'simulation_off'}
     if not quality_ok:
         return {'ok': False, 'reason': 'proxy_not_allowed'}
+    if not coverage_ok:
+        return {'ok': False, 'reason': 'coverage_gap'}
     if market is None or not market.supported_rules or market.threshold is None:
         return {'ok': False, 'reason': 'unsupported_market'}
     if remaining < 60:
@@ -335,7 +349,7 @@ def confirm(store, intent, market, book, book_at, now, risk, max_age, min_latenc
         return {'ok': False, 'reason': 'not_open'}
     return {'ok': True, 'reason': 'filled', 'position_id': position_id, 'quantity': qty, 'price': ask, 'debit': charges['debit'], 'fee': charges['net_fee']}
 
-def step_execution(store, market, probability, book, book_at, now, risk, multiplier, enabled, quality_ok, max_age, min_latency, max_intent_age, fetched_book):
+def step_execution(store, market, probability, book, book_at, now, risk, multiplier, enabled, quality_ok, max_age, min_latency, max_intent_age, fetched_book, coverage_ok=True):
     """Confirm or expire resting intents, then maybe record a new decision."""
     if getattr(store, 'legacy_readonly', False):
         return {'confirmed': None, 'proposed': {'ok': False, 'reason': 'legacy_readonly'}}
@@ -348,7 +362,7 @@ def step_execution(store, market, probability, book, book_at, now, risk, multipl
     proposed = {'ok': False, 'reason': 'no_forecast'}
     if probability is not None and market is not None and fetched_book:
         remaining = market.remaining(now)
-        proposed = propose(store, market, probability, book, now, book_at, remaining, risk, multiplier, enabled, quality_ok, max_age)
+        proposed = propose(store, market, probability, book, now, book_at, remaining, risk, multiplier, enabled, quality_ok, max_age, coverage_ok)
     return {'confirmed': result, 'proposed': proposed}
 
 def liquidation(side, quantity, book, ranges, multiplier):

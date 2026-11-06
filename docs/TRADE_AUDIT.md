@@ -34,7 +34,7 @@ The connection is `mode=ro`. The command does not retune rules.
 
 ## Forecast sample is not the fill sample
 
-Last forecast per resolved market: **29** contracts, accuracy **0.931** (27/29), Brier **0.0633**. That uses every resolved contract's last stored probability. The fill table is only the contracts that passed the taker filters. Those two numbers are not the same experiment.
+Last forecast per resolved market: **29** contracts, accuracy **0.931**, Brier **0.0633**. Median time left on that snapshot is **61 seconds**. Split by horizon, the 23 contracts with remaining ≤ 120s are accuracy **1.000** (Brier 0.024), and the 6 with remaining > 120s are accuracy **0.667** (Brier 0.215). The headline is the near-cutoff snapshot. Every fill in this file was decided with more than 180 seconds left. Details and the command are in [RUNTIME_AUDIT.md](RUNTIME_AUDIT.md). The package ends at the `21:06Z` backup. A later verbal tally (cash 79.31, 28 resolved, 29 fills) is not in this file.
 
 ## What the 26 fills were
 

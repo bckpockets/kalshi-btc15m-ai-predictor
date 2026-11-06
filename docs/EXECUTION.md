@@ -42,6 +42,8 @@ A new database gets one manifest row at process start: cash, open count, open co
 
 Fills also require both switches, recognized BRTI rules, a published threshold, at least 90 seconds left by default (and never inside the final 60), a quadratic-family multiplier, a fresh book (`MAX_DATA_AGE`), and a price grid. One filled position per ticker by default. Intents older than `EXECUTION_INTENT_SECONDS` (default 20) expire.
 
+A cycle that follows more than `max(5 × poll, 30)` seconds without a stored forecast does not open a new intent (`coverage_gap`). The forecast and quote for that cycle are still stored. The next cycle inside the threshold can propose. The gate does not change the $0.03 edge, the fee, or any existing row.
+
 ## What is verified
 
 - `pytest -q`: 40 passed on 2026-11-05 in this workspace (`.venv`, Python 3.12). Includes the previous suite and `tests/test_execution.py`.

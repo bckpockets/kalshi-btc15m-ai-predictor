@@ -1,0 +1,117 @@
+{
+  "schema": "runtime-audit-v1",
+  "optimizes_rules": false,
+  "writes": false,
+  "source_span": {
+    "first_quote": "2026-11-05T23:19:37.023497+00:00",
+    "last_quote": "2026-11-06T21:06:49.341879+00:00"
+  },
+  "cutoff_note": "Figures use only rows in this file. A later verbal tally is not in the file.",
+  "settlement_conflicts": 0,
+  "cash_identity": {
+    "ok": true,
+    "expected_cash": "81.42",
+    "cash": "81.42"
+  },
+  "fills_ok": 26,
+  "fills_bad": [],
+  "horizon": {
+    "schema": "forecast-horizon-v1",
+    "optimizes_rules": false,
+    "all_last": {
+      "n": 29,
+      "accuracy": 0.9310344827586207,
+      "brier": 0.06334132441734897,
+      "median_remaining": 61.254524
+    },
+    "near_cutoff_remaining_le_120s": {
+      "n": 23,
+      "accuracy": 1.0,
+      "brier": 0.0237663915843884,
+      "median_remaining": 61.001096
+    },
+    "earlier_remaining_gt_120s": {
+      "n": 6,
+      "accuracy": 0.6666666666666666,
+      "brier": 0.21504523361036446,
+      "median_remaining": 537.351088
+    },
+    "note": "Last-forecast accuracy is not the accuracy of the contracts that were traded."
+  },
+  "silence": [
+    {
+      "kind": "cross_contract_silence",
+      "seconds": 542.483805,
+      "from": "2026-11-06T01:07:04.875407+00:00",
+      "to": "2026-11-06T01:16:07.359212+00:00",
+      "from_ticker": "KXBTC15M-26NOV052015-15",
+      "to_ticker": "KXBTC15M-26NOV052030-30",
+      "inactive_series": false
+    },
+    {
+      "kind": "cross_contract_silence",
+      "seconds": 969.691687,
+      "from": "2026-11-06T02:15:42.697518+00:00",
+      "to": "2026-11-06T02:31:52.389205+00:00",
+      "from_ticker": "KXBTC15M-26NOV052130-30",
+      "to_ticker": "KXBTC15M-26NOV052145-45",
+      "inactive_series": false
+    },
+    {
+      "kind": "cross_contract_silence",
+      "seconds": 1145.314935,
+      "from": "2026-11-06T03:38:03.138755+00:00",
+      "to": "2026-11-06T03:57:08.453690+00:00",
+      "from_ticker": "KXBTC15M-26NOV052245-45",
+      "to_ticker": "KXBTC15M-26NOV052300-00",
+      "inactive_series": false
+    },
+    {
+      "kind": "cross_contract_silence",
+      "seconds": 24097.566596,
+      "from": "2026-11-06T05:21:38.093861+00:00",
+      "to": "2026-11-06T12:03:15.660457+00:00",
+      "from_ticker": "KXBTC15M-26NOV060030-30",
+      "to_ticker": "KXBTC15M-26NOV060715-15",
+      "inactive_series": false
+    },
+    {
+      "kind": "cross_contract_silence",
+      "seconds": 5455.937385,
+      "from": "2026-11-06T12:06:02.648912+00:00",
+      "to": "2026-11-06T13:36:58.586297+00:00",
+      "from_ticker": "KXBTC15M-26NOV060715-15",
+      "to_ticker": "KXBTC15M-26NOV060845-45",
+      "inactive_series": false
+    },
+    {
+      "kind": "same_contract_silence",
+      "seconds": 255.406366,
+      "from": "2026-11-06T13:49:26.414361+00:00",
+      "to": "2026-11-06T13:53:41.820727+00:00",
+      "from_ticker": "KXBTC15M-26NOV060900-00",
+      "to_ticker": "KXBTC15M-26NOV060900-00",
+      "inactive_series": false
+    },
+    {
+      "kind": "cross_contract_silence",
+      "seconds": 25460.544469,
+      "from": "2026-11-06T14:01:47.764043+00:00",
+      "to": "2026-11-06T21:06:08.308512+00:00",
+      "from_ticker": "KXBTC15M-26NOV060915-15",
+      "to_ticker": "KXBTC15M-26NOV061615-15",
+      "inactive_series": false
+    }
+  ],
+  "traded_subset": {
+    "schema": "traded-subset-v1",
+    "optimizes_rules": false,
+    "fills": 26,
+    "settled": 25,
+    "payout_positive": 9,
+    "side_probability_below_half": 16,
+    "model_ev": "7.00271029917960662750",
+    "realized": "-16.92",
+    "note": "Side probability below 0.5 can still clear a price edge. This sample does not set a new minimum."
+  }
+}

@@ -80,6 +80,26 @@ def test_legacy_state_without_last_received_at_uses_the_segment(tmp_path):
     assert quiet.note_gap(30) is None
     quiet.close()
 
+def test_a_stall_writes_one_gap_and_does_not_invent_polls(tmp_path):
+    import gzip
+    received = '2026-11-06T14:01:47.764043Z'
+    with gzip.open(tmp_path / 'segment-0001.jsonl.gz', 'wt', encoding='utf-8') as handle:
+        handle.write(json.dumps({'event': 'snapshot', 'response_received_at': received, 'ticker': 'KXBTC15M-26NOV060915-15'}) + '\n')
+    (tmp_path / 'state.json').write_text(json.dumps({'local_seq': 1, 'active': None, 'segments': [], 'next_index': 1}))
+    clock = FakeClock()
+    clock.now = datetime(2026, 11, 6, 21, 5, 47, tzinfo=timezone.utc)
+    recorder = Recorder(tmp_path, Script([]), clock)
+    first = recorder.note_gap(30)
+    second = recorder.note_gap(30)
+    recorder.close()
+    assert first['previous_received_at'] == received
+    assert second is None
+    from research.depth_recorder import read_records
+    records, skipped = read_records(tmp_path)
+    assert skipped == 0
+    assert sum(row['event'] == 'gap' for row in records) == 1
+    assert sum(row['event'] == 'snapshot' for row in records) == 1
+
 def test_supervise_stops_on_clean_exit_and_on_a_busy_lock():
     class Child:
         def __init__(self, code):

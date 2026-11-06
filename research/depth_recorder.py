@@ -319,6 +319,7 @@ class Recorder:
         self.previous_ticker = None
         self.backoff = self.poll_seconds
         self.stop = False
+        self._gap_for = None
     def close(self):
         self.store.close()
         if self.lock is not None:
@@ -334,10 +335,14 @@ class Recorder:
             'last_received_at': self.store.state.get('last_received_at'),
         })
     def note_gap(self, gap_seconds):
-        previous = last_recorded_receive(self.store.root)
-        if not previous:
+        previous = self.store.state.get('last_received_at') or last_recorded_receive(self.store.root)
+        if not previous or previous == self._gap_for:
             return None
-        delta = (self.clock.wall() - utc(previous)).total_seconds()
+        try:
+            moment = utc(previous)
+        except (TypeError, ValueError, OverflowError):
+            return None
+        delta = (self.clock.wall() - moment).total_seconds()
         if delta <= gap_seconds:
             return None
         record = {
@@ -350,6 +355,7 @@ class Recorder:
             'gap_seconds': delta,
             'note': 'No snapshots were invented for the missing interval.',
         }
+        self._gap_for = previous
         self.store.append(record)
         return record
     def _control(self, event, **extra):
@@ -471,7 +477,9 @@ class Recorder:
         self._control('started', until=until.isoformat(), poll_seconds=self.poll_seconds)
         self._heartbeat()
         reason = 'until'
+        gap_seconds = max(self.poll_seconds * 5, 30)
         while not self.stop and self.clock.wall() < until:
+            self.note_gap(gap_seconds)
             self.step()
             if self.stop:
                 reason = 'max_bytes'

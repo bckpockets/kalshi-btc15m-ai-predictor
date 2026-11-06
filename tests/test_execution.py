@@ -34,6 +34,19 @@ def armed(tmp_path, name='taker.sqlite'):
 def cash(store):
     return store.frame('select cash from account').cash[0]
 
+def test_coverage_gap_blocks_a_new_intent_and_does_not_touch_cash(tmp_path):
+    from btc15.execution import coverage_allows_entry
+    store = armed(tmp_path, 'gap.sqlite')
+    blocked = propose(store, mkt(), .8, touch(), AT, AT, 600, Risk(), 1, True, True, 10, coverage_ok=False)
+    assert blocked['reason'] == 'coverage_gap'
+    assert store.open_intents() == []
+    assert cash(store) == 1000
+    assert coverage_allows_entry(None, AT, 3) is True
+    assert coverage_allows_entry(AT - timedelta(seconds=10), AT, 3) is True
+    assert coverage_allows_entry(AT - timedelta(minutes=7), AT, 3) is False
+    opened = propose(store, mkt(), .8, touch(), AT, AT, 600, Risk(), 1, True, True, 10, coverage_ok=True)
+    assert opened['ok']
+
 def test_published_fee_table_is_cent_debit_not_raw_model():
     # General Trading Fees Table, effective July 7, 2026. Fee column, not the unrounded 0.07*C*P*(1-P).
     table = [

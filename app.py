@@ -6,6 +6,7 @@ from btc15.domain import now
 from btc15.engine import Engine, fee_multiplier
 from btc15.execution import book_top, liquidation, taker_charges
 from btc15.paper import Risk
+from research.audit_runtime import horizon_summary
 from research.evaluate import metrics
 
 st.set_page_config(page_title='BTC / 15 · Research terminal',page_icon='◷',layout='wide')
@@ -141,6 +142,11 @@ def terminal():
         if d.empty:st.info('No officially resolved forecasts yet. Accuracy and calibration appear after Kalshi publishes outcomes.')
         else:
             latest=d.groupby('ticker').tail(1);a,b=st.columns(2);a.metric('Resolved prediction snapshots',len(d));b.metric('Distinct resolved contracts',len(latest))
+            st.caption('Last-forecast accuracy is the final stored snapshot for each resolved contract. On this collector that snapshot is often about 60 seconds before the final-minute cutoff. It is not the accuracy of the fills, and it is not an entry-time score.')
+            horizon=horizon_summary(latest.to_dict('records'))
+            near,early=st.columns(2)
+            near.metric('Last forecast · remaining ≤ 120s', '—' if horizon['near_cutoff_remaining_le_120s']['accuracy'] is None else f"{horizon['near_cutoff_remaining_le_120s']['accuracy']:.1%}", f"n={horizon['near_cutoff_remaining_le_120s']['n']}")
+            early.metric('Last forecast · remaining > 120s', '—' if horizon['earlier_remaining_gt_120s']['accuracy'] is None else f"{horizon['earlier_remaining_gt_120s']['accuracy']:.1%}", f"n={horizon['earlier_remaining_gt_120s']['n']}")
             for label,frame in [('Contract level · last forecast',latest),('Prediction level · correlated snapshots',d)]:
                 r=metrics(frame.label,frame.probability);st.subheader(label);st.write({k:r[k] for k in ['accuracy','brier','log_loss','ece']})
             st.line_chart(latest.assign(correct=(latest.probability>=.5)==latest.label).set_index('timestamp').correct.rolling(20,min_periods=1).mean())
