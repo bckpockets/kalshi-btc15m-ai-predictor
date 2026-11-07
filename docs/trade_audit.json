@@ -1,0 +1,1307 @@
+{
+  "schema": "trade-attribution-v1",
+  "execution_model": "taker-confirm-v1",
+  "optimizes_rules": false,
+  "forecast_sample": "not this report; fill results are a filtered subset",
+  "fills": [
+    {
+      "position_id": 1,
+      "intent_id": 1,
+      "ticker": "KXBTC15M-26NOV051830-30",
+      "side": "no",
+      "quantity": 3.72,
+      "fill_price": 0.48,
+      "fee": 0.0744,
+      "cost": 1.86,
+      "payout": 0.0,
+      "execution_model": "taker-confirm-v1",
+      "evidence": "missing",
+      "replay": null,
+      "probability": "0.5700846419977053",
+      "decision_at": "2026-11-05T23:20:00.824613+00:00",
+      "confirm_book_at": "2026-11-05T23:20:04.191513+00:00",
+      "seconds_decision_to_confirm": 3.3669,
+      "limit_price": "0.52",
+      "edge_at_limit": {
+        "debit": "2.00",
+        "net_fee": "0.0656",
+        "edge": "0.0324502333955547623655913978"
+      },
+      "edge_at_fill": {
+        "debit": "1.86",
+        "net_fee": "0.0744",
+        "edge": "0.0700846419977053"
+      },
+      "depth_counts": {
+        "rows": 0,
+        "two_sided": 0,
+        "one_sided": 0,
+        "empty": 0,
+        "missing_or_error": 0
+      },
+      "replay_note": "No two-sided recorded book for this ticker was received after the decision and at or before the confirm time."
+    },
+    {
+      "position_id": 2,
+      "intent_id": 2,
+      "ticker": "KXBTC15M-26NOV051845-45",
+      "side": "no",
+      "quantity": 6.66,
+      "fill_price": 0.25,
+      "fee": 0.095,
+      "cost": 1.76,
+      "payout": 0.0,
+      "execution_model": "taker-confirm-v1",
+      "evidence": "missing",
+      "replay": null,
+      "probability": "0.327024966483258",
+      "decision_at": "2026-11-05T23:36:17.967477+00:00",
+      "confirm_book_at": "2026-11-05T23:36:21.341894+00:00",
+      "seconds_decision_to_confirm": 3.374417,
+      "limit_price": "0.28",
+      "edge_at_limit": {
+        "debit": "1.96",
+        "net_fee": "0.0952",
+        "edge": "0.0327306721889637057057057057"
+      },
+      "edge_at_fill": {
+        "debit": "1.76",
+        "net_fee": "0.0950",
+        "edge": "0.0627607022189937357357357357"
+      },
+      "depth_counts": {
+        "rows": 0,
+        "two_sided": 0,
+        "one_sided": 0,
+        "empty": 0,
+        "missing_or_error": 0
+      },
+      "replay_note": "No two-sided recorded book for this ticker was received after the decision and at or before the confirm time."
+    },
+    {
+      "position_id": 3,
+      "intent_id": 3,
+      "ticker": "KXBTC15M-26NOV051900-00",
+      "side": "no",
+      "quantity": 4.72,
+      "fill_price": 0.38,
+      "fee": 0.0864,
+      "cost": 1.88,
+      "payout": 0.0,
+      "execution_model": "taker-confirm-v1",
+      "evidence": "recorded_book_differs",
+      "replay": {
+        "response_received_at": "2026-11-05T23:46:25.067544+00:00",
+        "local_receive_time_only": true,
+        "same_http_response_as_fill": false,
+        "executable_ask": "0.3900",
+        "displayed_size": "10923.95",
+        "fill_minus_ask": "-0.0100",
+        "queue_or_print": false
+      },
+      "probability": "0.4459668840270136",
+      "decision_at": "2026-11-05T23:46:24.778377+00:00",
+      "confirm_book_at": "2026-11-05T23:46:28.136772+00:00",
+      "seconds_decision_to_confirm": 3.358395,
+      "limit_price": "0.39",
+      "edge_at_limit": {
+        "debit": "1.92",
+        "net_fee": "0.0792",
+        "edge": "0.0391872230100644474576271186"
+      },
+      "edge_at_fill": {
+        "debit": "1.88",
+        "net_fee": "0.0864",
+        "edge": "0.0476617992812508881355932203"
+      },
+      "depth_counts": {
+        "rows": 1,
+        "two_sided": 1,
+        "one_sided": 0,
+        "empty": 0,
+        "missing_or_error": 0
+      }
+    },
+    {
+      "position_id": 4,
+      "intent_id": 6,
+      "ticker": "KXBTC15M-26NOV051915-15",
+      "side": "no",
+      "quantity": 11.15,
+      "fill_price": 0.16,
+      "fee": 0.106,
+      "cost": 1.89,
+      "payout": 0.0,
+      "execution_model": "taker-confirm-v1",
+      "evidence": "recorded_book_exact",
+      "replay": {
+        "response_received_at": "2026-11-06T00:04:07.789681+00:00",
+        "local_receive_time_only": true,
+        "same_http_response_as_fill": false,
+        "executable_ask": "0.1600",
+        "displayed_size": "9536.12",
+        "fill_minus_ask": "0.0000",
+        "queue_or_print": false
+      },
+      "probability": "0.201114821155773",
+      "decision_at": "2026-11-06T00:04:07.517644+00:00",
+      "confirm_book_at": "2026-11-06T00:04:10.881603+00:00",
+      "seconds_decision_to_confirm": 3.363959,
+      "limit_price": "0.16",
+      "edge_at_limit": {
+        "debit": "1.89",
+        "net_fee": "0.1060",
+        "edge": "0.0316080946983738968609865471"
+      },
+      "edge_at_fill": {
+        "debit": "1.89",
+        "net_fee": "0.1060",
+        "edge": "0.0316080946983738968609865471"
+      },
+      "depth_counts": {
+        "rows": 1,
+        "two_sided": 1,
+        "one_sided": 0,
+        "empty": 0,
+        "missing_or_error": 0
+      }
+    },
+    {
+      "position_id": 5,
+      "intent_id": 7,
+      "ticker": "KXBTC15M-26NOV051930-30",
+      "side": "no",
+      "quantity": 5.51,
+      "fill_price": 0.29,
+      "fee": 0.0821,
+      "cost": 1.68,
+      "payout": 0.0,
+      "execution_model": "taker-confirm-v1",
+      "evidence": "recorded_book_exact",
+      "replay": {
+        "response_received_at": "2026-11-06T00:16:03.370837+00:00",
+        "local_receive_time_only": true,
+        "same_http_response_as_fill": false,
+        "executable_ask": "0.2900",
+        "displayed_size": "8789.50",
+        "fill_minus_ask": "0.0000",
+        "queue_or_print": false
+      },
+      "probability": "0.3682936921128342",
+      "decision_at": "2026-11-06T00:16:00.645388+00:00",
+      "confirm_book_at": "2026-11-06T00:16:04.237956+00:00",
+      "seconds_decision_to_confirm": 3.592568,
+      "limit_price": "0.32",
+      "edge_at_limit": {
+        "debit": "1.85",
+        "net_fee": "0.0868",
+        "edge": "0.0325405160692770312159709619"
+      },
+      "edge_at_fill": {
+        "debit": "1.68",
+        "net_fee": "0.0821",
+        "edge": "0.0633935106246309332123411978"
+      },
+      "depth_counts": {
+        "rows": 1,
+        "two_sided": 1,
+        "one_sided": 0,
+        "empty": 0,
+        "missing_or_error": 0
+      }
+    },
+    {
+      "position_id": 6,
+      "intent_id": 9,
+      "ticker": "KXBTC15M-26NOV051945-45",
+      "side": "no",
+      "quantity": 4.94,
+      "fill_price": 0.35,
+      "fee": 0.081,
+      "cost": 1.81,
+      "payout": 0.0,
+      "execution_model": "taker-confirm-v1",
+      "evidence": "recorded_book_exact",
+      "replay": {
+        "response_received_at": "2026-11-06T00:32:18.299022+00:00",
+        "local_receive_time_only": true,
+        "same_http_response_as_fill": false,
+        "executable_ask": "0.3500",
+        "displayed_size": "3854.93",
+        "fill_minus_ask": "0.0000",
+        "queue_or_print": false
+      },
+      "probability": "0.4038265726859213",
+      "decision_at": "2026-11-06T00:32:17.485173+00:00",
+      "confirm_book_at": "2026-11-06T00:32:20.854884+00:00",
+      "seconds_decision_to_confirm": 3.369711,
+      "limit_price": "0.35",
+      "edge_at_limit": {
+        "debit": "1.81",
+        "net_fee": "0.0810",
+        "edge": "0.0374298115523180611336032389"
+      },
+      "edge_at_fill": {
+        "debit": "1.81",
+        "net_fee": "0.0810",
+        "edge": "0.0374298115523180611336032389"
+      },
+      "depth_counts": {
+        "rows": 1,
+        "two_sided": 1,
+        "one_sided": 0,
+        "empty": 0,
+        "missing_or_error": 0
+      }
+    },
+    {
+      "position_id": 7,
+      "intent_id": 10,
+      "ticker": "KXBTC15M-26NOV052000-00",
+      "side": "yes",
+      "quantity": 4.37,
+      "fill_price": 0.36,
+      "fee": 0.0768,
+      "cost": 1.65,
+      "payout": 0.0,
+      "execution_model": "taker-confirm-v1",
+      "evidence": "recorded_book_differs",
+      "replay": {
+        "response_received_at": "2026-11-06T00:47:00.038453+00:00",
+        "local_receive_time_only": true,
+        "same_http_response_as_fill": false,
+        "executable_ask": "0.3800",
+        "displayed_size": "12318.79",
+        "fill_minus_ask": "-0.0200",
+        "queue_or_print": false
+      },
+      "probability": "0.43849167587201476",
+      "decision_at": "2026-11-06T00:46:58.947104+00:00",
+      "confirm_book_at": "2026-11-06T00:47:02.319153+00:00",
+      "seconds_decision_to_confirm": 3.372049,
+      "limit_price": "0.39",
+      "edge_at_limit": {
+        "debit": "1.78",
+        "net_fee": "0.0757",
+        "edge": "0.0311690214097721970709382151"
+      },
+      "edge_at_fill": {
+        "debit": "1.65",
+        "net_fee": "0.0768",
+        "edge": "0.0609173051626326089702517162"
+      },
+      "depth_counts": {
+        "rows": 1,
+        "two_sided": 1,
+        "one_sided": 0,
+        "empty": 0,
+        "missing_or_error": 0
+      }
+    },
+    {
+      "position_id": 8,
+      "intent_id": 12,
+      "ticker": "KXBTC15M-26NOV052015-15",
+      "side": "no",
+      "quantity": 4.17,
+      "fill_price": 0.38,
+      "fee": 0.0754,
+      "cost": 1.66,
+      "payout": 4.17,
+      "execution_model": "taker-confirm-v1",
+      "evidence": "recorded_book_differs",
+      "replay": {
+        "response_received_at": "2026-11-06T01:01:19.064819+00:00",
+        "local_receive_time_only": true,
+        "same_http_response_as_fill": false,
+        "executable_ask": "0.4100",
+        "displayed_size": "12547.15",
+        "fill_minus_ask": "-0.0300",
+        "queue_or_print": false
+      },
+      "probability": "0.4482711288839639",
+      "decision_at": "2026-11-06T01:01:17.966441+00:00",
+      "confirm_book_at": "2026-11-06T01:01:21.339605+00:00",
+      "seconds_decision_to_confirm": 3.373164,
+      "limit_price": "0.4",
+      "edge_at_limit": {
+        "debit": "1.74",
+        "net_fee": "0.072",
+        "edge": "0.0310049418336041877697841727"
+      },
+      "edge_at_fill": {
+        "debit": "1.66",
+        "net_fee": "0.0754",
+        "edge": "0.0501895941117816458033573141"
+      },
+      "depth_counts": {
+        "rows": 1,
+        "two_sided": 1,
+        "one_sided": 0,
+        "empty": 0,
+        "missing_or_error": 0
+      }
+    },
+    {
+      "position_id": 9,
+      "intent_id": 13,
+      "ticker": "KXBTC15M-26NOV052030-30",
+      "side": "no",
+      "quantity": 2.31,
+      "fill_price": 0.76,
+      "fee": 0.0344,
+      "cost": 1.79,
+      "payout": 2.31,
+      "execution_model": "taker-confirm-v1",
+      "evidence": "recorded_book_exact",
+      "replay": {
+        "response_received_at": "2026-11-06T01:17:02.617970+00:00",
+        "local_receive_time_only": true,
+        "same_http_response_as_fill": false,
+        "executable_ask": "0.7600",
+        "displayed_size": "7468.10",
+        "fill_minus_ask": "0.0000",
+        "queue_or_print": false
+      },
+      "probability": "0.80789817921319168",
+      "decision_at": "2026-11-06T01:17:02.086302+00:00",
+      "confirm_book_at": "2026-11-06T01:17:05.446873+00:00",
+      "seconds_decision_to_confirm": 3.360571,
+      "limit_price": "0.76",
+      "edge_at_limit": {
+        "debit": "1.79",
+        "net_fee": "0.0344",
+        "edge": "0.0330064043214167882251082251"
+      },
+      "edge_at_fill": {
+        "debit": "1.79",
+        "net_fee": "0.0344",
+        "edge": "0.0330064043214167882251082251"
+      },
+      "depth_counts": {
+        "rows": 1,
+        "two_sided": 1,
+        "one_sided": 0,
+        "empty": 0,
+        "missing_or_error": 0
+      }
+    },
+    {
+      "position_id": 10,
+      "intent_id": 15,
+      "ticker": "KXBTC15M-26NOV052045-45",
+      "side": "no",
+      "quantity": 24.98,
+      "fill_price": 0.066,
+      "fee": 0.11132,
+      "cost": 1.76,
+      "payout": 0.0,
+      "execution_model": "taker-confirm-v1",
+      "evidence": "recorded_book_differs",
+      "replay": {
+        "response_received_at": "2026-11-06T01:40:46.403841+00:00",
+        "local_receive_time_only": true,
+        "same_http_response_as_fill": false,
+        "executable_ask": "0.0670",
+        "displayed_size": "1544.69",
+        "fill_minus_ask": "-0.0010",
+        "queue_or_print": false
+      },
+      "probability": "0.108306942904935",
+      "decision_at": "2026-11-06T01:40:44.730206+00:00",
+      "confirm_book_at": "2026-11-06T01:40:48.101744+00:00",
+      "seconds_decision_to_confirm": 3.371538,
+      "limit_price": "0.068",
+      "edge_at_limit": {
+        "debit": "1.81",
+        "net_fee": "0.11136",
+        "edge": "0.03584897653183652121697357886"
+      },
+      "edge_at_fill": {
+        "debit": "1.76",
+        "net_fee": "0.11132",
+        "edge": "0.03785057781286134107285828663"
+      },
+      "depth_counts": {
+        "rows": 1,
+        "two_sided": 1,
+        "one_sided": 0,
+        "empty": 0,
+        "missing_or_error": 0
+      }
+    },
+    {
+      "position_id": 11,
+      "intent_id": 16,
+      "ticker": "KXBTC15M-26NOV052100-00",
+      "side": "no",
+      "quantity": 4.7,
+      "fill_price": 0.36,
+      "fee": 0.078,
+      "cost": 1.77,
+      "payout": 4.7,
+      "execution_model": "taker-confirm-v1",
+      "evidence": "recorded_book_differs",
+      "replay": {
+        "response_received_at": "2026-11-06T01:47:25.197798+00:00",
+        "local_receive_time_only": true,
+        "same_http_response_as_fill": false,
+        "executable_ask": "0.3500",
+        "displayed_size": "2985.93",
+        "fill_minus_ask": "0.0100",
+        "queue_or_print": false
+      },
+      "probability": "0.409012546283741",
+      "decision_at": "2026-11-06T01:47:24.212866+00:00",
+      "confirm_book_at": "2026-11-06T01:47:27.583979+00:00",
+      "seconds_decision_to_confirm": 3.371113,
+      "limit_price": "0.36",
+      "edge_at_limit": {
+        "debit": "1.77",
+        "net_fee": "0.078",
+        "edge": "0.0324168016028899361702127660"
+      },
+      "edge_at_fill": {
+        "debit": "1.77",
+        "net_fee": "0.078",
+        "edge": "0.0324168016028899361702127660"
+      },
+      "depth_counts": {
+        "rows": 1,
+        "two_sided": 1,
+        "one_sided": 0,
+        "empty": 0,
+        "missing_or_error": 0
+      }
+    },
+    {
+      "position_id": 12,
+      "intent_id": 25,
+      "ticker": "KXBTC15M-26NOV052115-15",
+      "side": "no",
+      "quantity": 3.91,
+      "fill_price": 0.45,
+      "fee": 0.0705,
+      "cost": 1.83,
+      "payout": 0.0,
+      "execution_model": "taker-confirm-v1",
+      "evidence": "recorded_book_exact",
+      "replay": {
+        "response_received_at": "2026-11-06T02:03:13.486484+00:00",
+        "local_receive_time_only": true,
+        "same_http_response_as_fill": false,
+        "executable_ask": "0.4500",
+        "displayed_size": "7646.71",
+        "fill_minus_ask": "0.0000",
+        "queue_or_print": false
+      },
+      "probability": "0.500523848778085",
+      "decision_at": "2026-11-06T02:03:10.324843+00:00",
+      "confirm_book_at": "2026-11-06T02:03:13.694576+00:00",
+      "seconds_decision_to_confirm": 3.369733,
+      "limit_price": "0.45",
+      "edge_at_limit": {
+        "debit": "1.83",
+        "net_fee": "0.0705",
+        "edge": "0.0324931582410006010230179028"
+      },
+      "edge_at_fill": {
+        "debit": "1.83",
+        "net_fee": "0.0705",
+        "edge": "0.0324931582410006010230179028"
+      },
+      "depth_counts": {
+        "rows": 2,
+        "two_sided": 2,
+        "one_sided": 0,
+        "empty": 0,
+        "missing_or_error": 0
+      }
+    },
+    {
+      "position_id": 13,
+      "intent_id": 28,
+      "ticker": "KXBTC15M-26NOV052145-45",
+      "side": "yes",
+      "quantity": 6.3,
+      "fill_price": 0.27,
+      "fee": 0.089,
+      "cost": 1.79,
+      "payout": 0.0,
+      "execution_model": "taker-confirm-v1",
+      "evidence": "recorded_book_exact",
+      "replay": {
+        "response_received_at": "2026-11-06T02:32:04.864994+00:00",
+        "local_receive_time_only": true,
+        "same_http_response_as_fill": false,
+        "executable_ask": "0.2700",
+        "displayed_size": "11810.82",
+        "fill_minus_ask": "0.0000",
+        "queue_or_print": false
+      },
+      "probability": "0.32280005035315473",
+      "decision_at": "2026-11-06T02:32:03.003207+00:00",
+      "confirm_book_at": "2026-11-06T02:32:06.377531+00:00",
+      "seconds_decision_to_confirm": 3.374324,
+      "limit_price": "0.27",
+      "edge_at_limit": {
+        "debit": "1.79",
+        "net_fee": "0.089",
+        "edge": "0.0386730662261706030158730159"
+      },
+      "edge_at_fill": {
+        "debit": "1.79",
+        "net_fee": "0.089",
+        "edge": "0.0386730662261706030158730159"
+      },
+      "depth_counts": {
+        "rows": 1,
+        "two_sided": 1,
+        "one_sided": 0,
+        "empty": 0,
+        "missing_or_error": 0
+      }
+    },
+    {
+      "position_id": 14,
+      "intent_id": 31,
+      "ticker": "KXBTC15M-26NOV052200-00",
+      "side": "no",
+      "quantity": 7.58,
+      "fill_price": 0.18,
+      "fee": 0.0856,
+      "cost": 1.45,
+      "payout": 0.0,
+      "execution_model": "taker-confirm-v1",
+      "evidence": "recorded_book_exact",
+      "replay": {
+        "response_received_at": "2026-11-06T02:55:48.677757+00:00",
+        "local_receive_time_only": true,
+        "same_http_response_as_fill": false,
+        "executable_ask": "0.1800",
+        "displayed_size": "2023.59",
+        "fill_minus_ask": "0.0000",
+        "queue_or_print": false
+      },
+      "probability": "0.2730535397657524",
+      "decision_at": "2026-11-06T02:55:47.694259+00:00",
+      "confirm_book_at": "2026-11-06T02:55:51.690126+00:00",
+      "seconds_decision_to_confirm": 3.995867,
+      "limit_price": "0.22",
+      "edge_at_limit": {
+        "debit": "1.76",
+        "net_fee": "0.0924",
+        "edge": "0.0408635661509766744063324538"
+      },
+      "edge_at_fill": {
+        "debit": "1.45",
+        "net_fee": "0.0856",
+        "edge": "0.0817606637763064897097625330"
+      },
+      "depth_counts": {
+        "rows": 1,
+        "two_sided": 1,
+        "one_sided": 0,
+        "empty": 0,
+        "missing_or_error": 0
+      }
+    },
+    {
+      "position_id": 15,
+      "intent_id": 33,
+      "ticker": "KXBTC15M-26NOV052215-15",
+      "side": "no",
+      "quantity": 4.47,
+      "fill_price": 0.37,
+      "fee": 0.0761,
+      "cost": 1.73,
+      "payout": 4.47,
+      "execution_model": "taker-confirm-v1",
+      "evidence": "recorded_book_exact",
+      "replay": {
+        "response_received_at": "2026-11-06T03:01:33.854723+00:00",
+        "local_receive_time_only": true,
+        "same_http_response_as_fill": false,
+        "executable_ask": "0.3700",
+        "displayed_size": "6220.88",
+        "fill_minus_ask": "0.0000",
+        "queue_or_print": false
+      },
+      "probability": "0.432483070859056",
+      "decision_at": "2026-11-06T03:01:30.664795+00:00",
+      "confirm_book_at": "2026-11-06T03:01:34.036480+00:00",
+      "seconds_decision_to_confirm": 3.371685,
+      "limit_price": "0.37",
+      "edge_at_limit": {
+        "debit": "1.73",
+        "net_fee": "0.0761",
+        "edge": "0.0454584623579374317673378076"
+      },
+      "edge_at_fill": {
+        "debit": "1.73",
+        "net_fee": "0.0761",
+        "edge": "0.0454584623579374317673378076"
+      },
+      "depth_counts": {
+        "rows": 2,
+        "two_sided": 2,
+        "one_sided": 0,
+        "empty": 0,
+        "missing_or_error": 0
+      }
+    },
+    {
+      "position_id": 16,
+      "intent_id": 35,
+      "ticker": "KXBTC15M-26NOV052230-30",
+      "side": "yes",
+      "quantity": 9.89,
+      "fill_price": 0.16,
+      "fee": 0.0976,
+      "cost": 1.68,
+      "payout": 0.0,
+      "execution_model": "taker-confirm-v1",
+      "evidence": "recorded_book_exact",
+      "replay": {
+        "response_received_at": "2026-11-06T03:23:29.392338+00:00",
+        "local_receive_time_only": true,
+        "same_http_response_as_fill": false,
+        "executable_ask": "0.1600",
+        "displayed_size": "6138.91",
+        "fill_minus_ask": "0.0000",
+        "queue_or_print": false
+      },
+      "probability": "0.22291580984049447",
+      "decision_at": "2026-11-06T03:23:27.477788+00:00",
+      "confirm_book_at": "2026-11-06T03:23:30.841425+00:00",
+      "seconds_decision_to_confirm": 3.363637,
+      "limit_price": "0.17",
+      "edge_at_limit": {
+        "debit": "1.78",
+        "net_fee": "0.0987",
+        "edge": "0.0429360322874105468452982811"
+      },
+      "edge_at_fill": {
+        "debit": "1.68",
+        "net_fee": "0.0976",
+        "edge": "0.0530472557454489694944388271"
+      },
+      "depth_counts": {
+        "rows": 1,
+        "two_sided": 1,
+        "one_sided": 0,
+        "empty": 0,
+        "missing_or_error": 0
+      }
+    },
+    {
+      "position_id": 17,
+      "intent_id": 37,
+      "ticker": "KXBTC15M-26NOV052245-45",
+      "side": "no",
+      "quantity": 1.95,
+      "fill_price": 0.89,
+      "fee": 0.0145,
+      "cost": 1.75,
+      "payout": 1.95,
+      "execution_model": "taker-confirm-v1",
+      "evidence": "recorded_book_exact",
+      "replay": {
+        "response_received_at": "2026-11-06T03:34:06.705564+00:00",
+        "local_receive_time_only": true,
+        "same_http_response_as_fill": false,
+        "executable_ask": "0.8900",
+        "displayed_size": "13139.90",
+        "fill_minus_ask": "0.0000",
+        "queue_or_print": false
+      },
+      "probability": "0.94205561454157016",
+      "decision_at": "2026-11-06T03:34:05.656967+00:00",
+      "confirm_book_at": "2026-11-06T03:34:09.031252+00:00",
+      "seconds_decision_to_confirm": 3.374285,
+      "limit_price": "0.89",
+      "edge_at_limit": {
+        "debit": "1.75",
+        "net_fee": "0.0145",
+        "edge": "0.0446197171056727241025641026"
+      },
+      "edge_at_fill": {
+        "debit": "1.75",
+        "net_fee": "0.0145",
+        "edge": "0.0446197171056727241025641026"
+      },
+      "depth_counts": {
+        "rows": 1,
+        "two_sided": 1,
+        "one_sided": 0,
+        "empty": 0,
+        "missing_or_error": 0
+      }
+    },
+    {
+      "position_id": 18,
+      "intent_id": 40,
+      "ticker": "KXBTC15M-26NOV052315-15",
+      "side": "no",
+      "quantity": 1.97,
+      "fill_price": 0.88,
+      "fee": 0.0164,
+      "cost": 1.75,
+      "payout": 1.97,
+      "execution_model": "taker-confirm-v1",
+      "evidence": "recorded_book_exact",
+      "replay": {
+        "response_received_at": "2026-11-06T04:04:54.853971+00:00",
+        "local_receive_time_only": true,
+        "same_http_response_as_fill": false,
+        "executable_ask": "0.8800",
+        "displayed_size": "11565.36",
+        "fill_minus_ask": "0.0000",
+        "queue_or_print": false
+      },
+      "probability": "0.9183832986972818",
+      "decision_at": "2026-11-06T04:04:52.199525+00:00",
+      "confirm_book_at": "2026-11-06T04:04:55.571089+00:00",
+      "seconds_decision_to_confirm": 3.371564,
+      "limit_price": "0.88",
+      "edge_at_limit": {
+        "debit": "1.75",
+        "net_fee": "0.0164",
+        "edge": "0.0300584256008350994923857868"
+      },
+      "edge_at_fill": {
+        "debit": "1.75",
+        "net_fee": "0.0164",
+        "edge": "0.0300584256008350994923857868"
+      },
+      "depth_counts": {
+        "rows": 1,
+        "two_sided": 1,
+        "one_sided": 0,
+        "empty": 0,
+        "missing_or_error": 0
+      }
+    },
+    {
+      "position_id": 19,
+      "intent_id": 44,
+      "ticker": "KXBTC15M-26NOV052345-45",
+      "side": "no",
+      "quantity": 5.09,
+      "fill_price": 0.32,
+      "fee": 0.0812,
+      "cost": 1.71,
+      "payout": 0.0,
+      "execution_model": "taker-confirm-v1",
+      "evidence": "recorded_book_differs",
+      "replay": {
+        "response_received_at": "2026-11-06T04:32:47.793756+00:00",
+        "local_receive_time_only": true,
+        "same_http_response_as_fill": false,
+        "executable_ask": "0.3300",
+        "displayed_size": "9950.23",
+        "fill_minus_ask": "-0.0100",
+        "queue_or_print": false
+      },
+      "probability": "0.3775520180701468",
+      "decision_at": "2026-11-06T04:32:47.761099+00:00",
+      "confirm_book_at": "2026-11-06T04:32:51.132748+00:00",
+      "seconds_decision_to_confirm": 3.371649,
+      "limit_price": "0.33",
+      "edge_at_limit": {
+        "debit": "1.76",
+        "net_fee": "0.0803",
+        "edge": "0.0317759866359621241650294695"
+      },
+      "edge_at_fill": {
+        "debit": "1.71",
+        "net_fee": "0.0812",
+        "edge": "0.0415991693471605524557956778"
+      },
+      "depth_counts": {
+        "rows": 1,
+        "two_sided": 1,
+        "one_sided": 0,
+        "empty": 0,
+        "missing_or_error": 0
+      }
+    },
+    {
+      "position_id": 20,
+      "intent_id": 45,
+      "ticker": "KXBTC15M-26NOV060000-00",
+      "side": "no",
+      "quantity": 4.12,
+      "fill_price": 0.39,
+      "fee": 0.0732,
+      "cost": 1.68,
+      "payout": 0.0,
+      "execution_model": "taker-confirm-v1",
+      "evidence": "recorded_book_exact",
+      "replay": {
+        "response_received_at": "2026-11-06T04:45:51.881725+00:00",
+        "local_receive_time_only": true,
+        "same_http_response_as_fill": false,
+        "executable_ask": "0.3900",
+        "displayed_size": "13838.28",
+        "fill_minus_ask": "0.0000",
+        "queue_or_print": false
+      },
+      "probability": "0.4548915093001998",
+      "decision_at": "2026-11-06T04:45:50.745902+00:00",
+      "confirm_book_at": "2026-11-06T04:45:54.122293+00:00",
+      "seconds_decision_to_confirm": 3.376391,
+      "limit_price": "0.4",
+      "edge_at_limit": {
+        "debit": "1.72",
+        "net_fee": "0.072",
+        "edge": "0.0374157811448599941747572816"
+      },
+      "edge_at_fill": {
+        "debit": "1.68",
+        "net_fee": "0.0732",
+        "edge": "0.0471245190089376640776699029"
+      },
+      "depth_counts": {
+        "rows": 1,
+        "two_sided": 1,
+        "one_sided": 0,
+        "empty": 0,
+        "missing_or_error": 0
+      }
+    },
+    {
+      "position_id": 21,
+      "intent_id": 46,
+      "ticker": "KXBTC15M-26NOV060015-15",
+      "side": "no",
+      "quantity": 2.08,
+      "fill_price": 0.8,
+      "fee": 0.026,
+      "cost": 1.69,
+      "payout": 2.08,
+      "execution_model": "taker-confirm-v1",
+      "evidence": "recorded_book_exact",
+      "replay": {
+        "response_received_at": "2026-11-06T05:02:17.322992+00:00",
+        "local_receive_time_only": true,
+        "same_http_response_as_fill": false,
+        "executable_ask": "0.8000",
+        "displayed_size": "10395.29",
+        "fill_minus_ask": "0.0000",
+        "queue_or_print": false
+      },
+      "probability": "0.8650076593297813",
+      "decision_at": "2026-11-06T05:02:14.516539+00:00",
+      "confirm_book_at": "2026-11-06T05:02:18.499040+00:00",
+      "seconds_decision_to_confirm": 3.982501,
+      "limit_price": "0.8",
+      "edge_at_limit": {
+        "debit": "1.69",
+        "net_fee": "0.026",
+        "edge": "0.0525076593297813"
+      },
+      "edge_at_fill": {
+        "debit": "1.69",
+        "net_fee": "0.026",
+        "edge": "0.0525076593297813"
+      },
+      "depth_counts": {
+        "rows": 1,
+        "two_sided": 1,
+        "one_sided": 0,
+        "empty": 0,
+        "missing_or_error": 0
+      }
+    },
+    {
+      "position_id": 22,
+      "intent_id": 47,
+      "ticker": "KXBTC15M-26NOV060030-30",
+      "side": "no",
+      "quantity": 2.82,
+      "fill_price": 0.54,
+      "fee": 0.0572,
+      "cost": 1.58,
+      "payout": 2.82,
+      "execution_model": "taker-confirm-v1",
+      "evidence": "recorded_book_exact",
+      "replay": {
+        "response_received_at": "2026-11-06T05:15:22.341146+00:00",
+        "local_receive_time_only": true,
+        "same_http_response_as_fill": false,
+        "executable_ask": "0.5400",
+        "displayed_size": "9421.96",
+        "fill_minus_ask": "0.0000",
+        "queue_or_print": false
+      },
+      "probability": "0.64461696330613383",
+      "decision_at": "2026-11-06T05:15:19.017742+00:00",
+      "confirm_book_at": "2026-11-06T05:15:22.389214+00:00",
+      "seconds_decision_to_confirm": 3.371472,
+      "limit_price": "0.57",
+      "edge_at_limit": {
+        "debit": "1.66",
+        "net_fee": "0.0526",
+        "edge": "0.0559644810366302839007092199"
+      },
+      "edge_at_fill": {
+        "debit": "1.58",
+        "net_fee": "0.0572",
+        "edge": "0.0843332753628714186524822695"
+      },
+      "depth_counts": {
+        "rows": 2,
+        "two_sided": 2,
+        "one_sided": 0,
+        "empty": 0,
+        "missing_or_error": 0
+      }
+    },
+    {
+      "position_id": 23,
+      "intent_id": 48,
+      "ticker": "KXBTC15M-26NOV060715-15",
+      "side": "no",
+      "quantity": 3.52,
+      "fill_price": 0.47,
+      "fee": 0.0656,
+      "cost": 1.72,
+      "payout": 0.0,
+      "execution_model": "taker-confirm-v1",
+      "evidence": "recorded_book_differs",
+      "replay": {
+        "response_received_at": "2026-11-06T12:03:16.763677+00:00",
+        "local_receive_time_only": true,
+        "same_http_response_as_fill": false,
+        "executable_ask": "0.4800",
+        "displayed_size": "9159.74",
+        "fill_minus_ask": "-0.0100",
+        "queue_or_print": false
+      },
+      "probability": "0.51913461573396524",
+      "decision_at": "2026-11-06T12:03:15.660457+00:00",
+      "confirm_book_at": "2026-11-06T12:03:19.031202+00:00",
+      "seconds_decision_to_confirm": 3.370745,
+      "limit_price": "0.47",
+      "edge_at_limit": {
+        "debit": "1.72",
+        "net_fee": "0.0656",
+        "edge": "0.0304982520976016036363636364"
+      },
+      "edge_at_fill": {
+        "debit": "1.72",
+        "net_fee": "0.0656",
+        "edge": "0.0304982520976016036363636364"
+      },
+      "depth_counts": {
+        "rows": 1,
+        "two_sided": 1,
+        "one_sided": 0,
+        "empty": 0,
+        "missing_or_error": 0
+      }
+    },
+    {
+      "position_id": 24,
+      "intent_id": 49,
+      "ticker": "KXBTC15M-26NOV060845-45",
+      "side": "no",
+      "quantity": 1.84,
+      "fill_price": 0.901,
+      "fee": 0.01216,
+      "cost": 1.67,
+      "payout": 1.84,
+      "execution_model": "taker-confirm-v1",
+      "evidence": "recorded_book_differs",
+      "replay": {
+        "response_received_at": "2026-11-06T13:36:59.773642+00:00",
+        "local_receive_time_only": true,
+        "same_http_response_as_fill": false,
+        "executable_ask": "0.9040",
+        "displayed_size": "3926.47",
+        "fill_minus_ask": "-0.0030",
+        "queue_or_print": false
+      },
+      "probability": "0.966459609839096345",
+      "decision_at": "2026-11-06T13:36:58.586297+00:00",
+      "confirm_book_at": "2026-11-06T13:37:02.266795+00:00",
+      "seconds_decision_to_confirm": 3.680498,
+      "limit_price": "0.908",
+      "edge_at_limit": {
+        "debit": "1.69",
+        "net_fee": "0.01928",
+        "edge": "0.0479813489695311276086956522"
+      },
+      "edge_at_fill": {
+        "debit": "1.67",
+        "net_fee": "0.01216",
+        "edge": "0.0588509141869224319565217391"
+      },
+      "depth_counts": {
+        "rows": 1,
+        "two_sided": 1,
+        "one_sided": 0,
+        "empty": 0,
+        "missing_or_error": 0
+      }
+    },
+    {
+      "position_id": 25,
+      "intent_id": 51,
+      "ticker": "KXBTC15M-26NOV060900-00",
+      "side": "no",
+      "quantity": 11.38,
+      "fill_price": 0.14,
+      "fee": 0.0968,
+      "cost": 1.69,
+      "payout": 0.0,
+      "execution_model": "taker-confirm-v1",
+      "evidence": "recorded_book_differs",
+      "replay": {
+        "response_received_at": "2026-11-06T13:53:47.649098+00:00",
+        "local_receive_time_only": true,
+        "same_http_response_as_fill": false,
+        "executable_ask": "0.1300",
+        "displayed_size": "12077.85",
+        "fill_minus_ask": "0.0100",
+        "queue_or_print": false
+      },
+      "probability": "0.2042124893542391",
+      "decision_at": "2026-11-06T13:53:45.617840+00:00",
+      "confirm_book_at": "2026-11-06T13:53:49.089680+00:00",
+      "seconds_decision_to_confirm": 3.47184,
+      "limit_price": "0.14",
+      "edge_at_limit": {
+        "debit": "1.69",
+        "net_fee": "0.0968",
+        "edge": "0.0557063382118840912126537786"
+      },
+      "edge_at_fill": {
+        "debit": "1.69",
+        "net_fee": "0.0968",
+        "edge": "0.0557063382118840912126537786"
+      },
+      "depth_counts": {
+        "rows": 1,
+        "two_sided": 1,
+        "one_sided": 0,
+        "empty": 0,
+        "missing_or_error": 0
+      }
+    },
+    {
+      "position_id": 26,
+      "intent_id": 53,
+      "ticker": "KXBTC15M-26NOV061615-15",
+      "side": "no",
+      "quantity": 2.97,
+      "fill_price": 0.54,
+      "fee": 0.0562,
+      "cost": 1.66,
+      "payout": null,
+      "execution_model": "taker-confirm-v1",
+      "evidence": "recorded_book_exact",
+      "replay": {
+        "response_received_at": "2026-11-06T21:06:12.610677+00:00",
+        "local_receive_time_only": true,
+        "same_http_response_as_fill": false,
+        "executable_ask": "0.5400",
+        "displayed_size": "3295.16",
+        "fill_minus_ask": "0.0000",
+        "queue_or_print": false
+      },
+      "probability": "0.5911792659903439",
+      "decision_at": "2026-11-06T21:06:11.771910+00:00",
+      "confirm_book_at": "2026-11-06T21:06:15.144269+00:00",
+      "seconds_decision_to_confirm": 3.372359,
+      "limit_price": "0.54",
+      "edge_at_limit": {
+        "debit": "1.66",
+        "net_fee": "0.0562",
+        "edge": "0.0322567070677849774410774411"
+      },
+      "edge_at_fill": {
+        "debit": "1.66",
+        "net_fee": "0.0562",
+        "edge": "0.0322567070677849774410774411"
+      },
+      "depth_counts": {
+        "rows": 1,
+        "two_sided": 1,
+        "one_sided": 0,
+        "empty": 0,
+        "missing_or_error": 0
+      }
+    }
+  ],
+  "expired_attempts": [
+    {
+      "id": 4,
+      "ticker": "KXBTC15M-26NOV051915-15",
+      "reason": "price_through_limit",
+      "status": "expired"
+    },
+    {
+      "id": 5,
+      "ticker": "KXBTC15M-26NOV051915-15",
+      "reason": "price_through_limit",
+      "status": "expired"
+    },
+    {
+      "id": 8,
+      "ticker": "KXBTC15M-26NOV051945-45",
+      "reason": "price_through_limit",
+      "status": "expired"
+    },
+    {
+      "id": 11,
+      "ticker": "KXBTC15M-26NOV052015-15",
+      "reason": "price_through_limit",
+      "status": "expired"
+    },
+    {
+      "id": 14,
+      "ticker": "KXBTC15M-26NOV052045-45",
+      "reason": "price_through_limit",
+      "status": "expired"
+    },
+    {
+      "id": 17,
+      "ticker": "KXBTC15M-26NOV052115-15",
+      "reason": "price_through_limit",
+      "status": "expired"
+    },
+    {
+      "id": 18,
+      "ticker": "KXBTC15M-26NOV052115-15",
+      "reason": "price_through_limit",
+      "status": "expired"
+    },
+    {
+      "id": 19,
+      "ticker": "KXBTC15M-26NOV052115-15",
+      "reason": "price_through_limit",
+      "status": "expired"
+    },
+    {
+      "id": 20,
+      "ticker": "KXBTC15M-26NOV052115-15",
+      "reason": "price_through_limit",
+      "status": "expired"
+    },
+    {
+      "id": 21,
+      "ticker": "KXBTC15M-26NOV052115-15",
+      "reason": "price_through_limit",
+      "status": "expired"
+    },
+    {
+      "id": 22,
+      "ticker": "KXBTC15M-26NOV052115-15",
+      "reason": "price_through_limit",
+      "status": "expired"
+    },
+    {
+      "id": 23,
+      "ticker": "KXBTC15M-26NOV052115-15",
+      "reason": "price_through_limit",
+      "status": "expired"
+    },
+    {
+      "id": 24,
+      "ticker": "KXBTC15M-26NOV052115-15",
+      "reason": "price_through_limit",
+      "status": "expired"
+    },
+    {
+      "id": 26,
+      "ticker": "KXBTC15M-26NOV052145-45",
+      "reason": "price_through_limit",
+      "status": "expired"
+    },
+    {
+      "id": 27,
+      "ticker": "KXBTC15M-26NOV052145-45",
+      "reason": "price_through_limit",
+      "status": "expired"
+    },
+    {
+      "id": 29,
+      "ticker": "KXBTC15M-26NOV052200-00",
+      "reason": "price_through_limit",
+      "status": "expired"
+    },
+    {
+      "id": 30,
+      "ticker": "KXBTC15M-26NOV052200-00",
+      "reason": "price_through_limit",
+      "status": "expired"
+    },
+    {
+      "id": 32,
+      "ticker": "KXBTC15M-26NOV052215-15",
+      "reason": "price_through_limit",
+      "status": "expired"
+    },
+    {
+      "id": 34,
+      "ticker": "KXBTC15M-26NOV052230-30",
+      "reason": "price_through_limit",
+      "status": "expired"
+    },
+    {
+      "id": 36,
+      "ticker": "KXBTC15M-26NOV052245-45",
+      "reason": "price_through_limit",
+      "status": "expired"
+    },
+    {
+      "id": 38,
+      "ticker": "KXBTC15M-26NOV052315-15",
+      "reason": "price_through_limit",
+      "status": "expired"
+    },
+    {
+      "id": 39,
+      "ticker": "KXBTC15M-26NOV052315-15",
+      "reason": "price_through_limit",
+      "status": "expired"
+    },
+    {
+      "id": 41,
+      "ticker": "KXBTC15M-26NOV052330-30",
+      "reason": "price_through_limit",
+      "status": "expired"
+    },
+    {
+      "id": 42,
+      "ticker": "KXBTC15M-26NOV052330-30",
+      "reason": "price_through_limit",
+      "status": "expired"
+    },
+    {
+      "id": 43,
+      "ticker": "KXBTC15M-26NOV052345-45",
+      "reason": "price_through_limit",
+      "status": "expired"
+    },
+    {
+      "id": 50,
+      "ticker": "KXBTC15M-26NOV060900-00",
+      "reason": "price_through_limit",
+      "status": "expired"
+    },
+    {
+      "id": 52,
+      "ticker": "KXBTC15M-26NOV061615-15",
+      "reason": "price_through_limit",
+      "status": "expired"
+    }
+  ],
+  "evidence_counts": {
+    "recorded_book_exact": 15,
+    "recorded_book_differs": 9,
+    "missing": 2
+  }
+}

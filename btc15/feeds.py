@@ -37,15 +37,31 @@ class Rest:
         self.client.close()
 
 class Kalshi(Rest):
-    def markets(self, status='open'):
+    def __init__(self, base, list_ttl=60.):
+        super().__init__(base)
+        self.list_ttl=float(list_ttl)
+        self._markets_cache=None
+    def markets(self, status='open', force=False):
+        """Open KXBTC15M list, served from a short TTL cache unless force=True.
+
+        The collector should still refresh the current ticker every cycle and
+        call this only for discovery. The cache is a backstop against a full
+        list on every poll.
+        """
+        now_m=time.monotonic()
+        cached=self._markets_cache
+        if not force and cached and cached[0]==status and now_m-cached[1]<self.list_ttl:
+            return list(cached[2])
         cursor = ''
         result = []
         while True:
             body = self.get('/markets', series_ticker='KXBTC15M', status=status, limit=100, cursor=cursor)
             result.extend(Market.model_validate(m) for m in body['markets'])
-            cursor = body.get('cursor','')
+            cursor = body.get('cursor','') or ''
             if not cursor:
-                return result
+                break
+        self._markets_cache=(status, now_m, result)
+        return list(result)
     def market(self, ticker):
         return Market.model_validate(self.get('/markets/'+ticker)['market'])
     def book(self, ticker):

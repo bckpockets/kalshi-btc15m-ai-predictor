@@ -1,5 +1,5 @@
 from datetime import datetime, timezone
-from pydantic import BaseModel, field_validator
+from pydantic import BaseModel, Field, field_validator
 import math
 
 def utc(value):
@@ -28,6 +28,8 @@ class Market(BaseModel):
     no_ask_dollars: float | None = None
     volume_fp: float = 0
     open_interest_fp: float = 0
+    price_level_structure: str = ''
+    price_ranges: list[dict] = Field(default_factory=list)
     @field_validator('open_time', 'close_time', mode='before')
     @classmethod
     def dates(cls, value):

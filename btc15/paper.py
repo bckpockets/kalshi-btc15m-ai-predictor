@@ -1,3 +1,17 @@
+"""Virtual fees, edge and risk limits. No order submission and no paid API.
+
+Quadratic fee, used when the series reports fee_type=quadratic:
+
+    fee = ceil_to_cent(0.07 × quantity × price × (1 − price) × multiplier)
+
+`economics()['edge']` is expected profit per contract (payout is $1), which is
+what `Risk.min_ev` compares against. `ev` is that quantity times contract count.
+
+Risk defaults match the sidebar and README: stake $10, 2% of cash, $0.03
+minimum EV per contract, $0.10 maximum spread, depth 10, one entry per
+interval, 90-second cutoff. STARTING_BANKROLL ($1000) is the new-account
+initial in Store, not a field on Risk.
+"""
 from dataclasses import dataclass
 from decimal import Decimal, ROUND_CEILING
 import math
@@ -22,6 +36,13 @@ def economics(probability,price,quantity=1,multiplier=1.):
     return {'fee':f,'cost':cost,'win_profit':quantity-cost,'loss':cost,'ev':quantity*probability-cost,'break_even':cost/quantity,'edge':probability-cost/quantity}
 
 def entry(store,m,p,book,at,remaining,risk,fee_multiplier,enabled=False,quality_ok=False):
+    """Legacy same-snapshot fill. Engine does not call this.
+
+    Rows written here have no taker-confirm manifest. A database that already
+    has a run manifest, or a legacy file opened read-only, is left unchanged.
+    """
+    if getattr(store,'legacy_readonly',False): return None
+    if getattr(store,'manifest_present',lambda: False)(): return None
     if not enabled or not quality_ok or remaining<risk.cutoff: return None
     candidates=[]
     for side,prob,bid in [('yes',p,m.yes_bid_dollars),('no',1-p,m.no_bid_dollars)]:

@@ -32,6 +32,6 @@ def backtest(d,initial=1000.,min_edge=.03):
         equity.append(cash+sum(x['cost'] for x in open_positions))
     settle(pd.Timestamp.max.tz_localize('UTC'));equity.append(cash)
     peak=pd.Series(equity).cummax();drawdown=((peak-pd.Series(equity))/peak).max()
-    return {'trades':len(events),'ending_cash':cash,'roi':cash/initial-1,'max_cost_basis_drawdown':float(drawdown),'win_rate':sum(x['payout'] for x in events)/len(events) if events else None,'equity_cost_basis':equity,'transactions':events,'limitations':'One contract per interval; historical top-of-book assumed available; open positions valued at cost, not mark-to-market.'}
+    return {'trades':len(events),'ending_cash':cash,'roi':cash/initial-1,'max_cost_basis_drawdown':float(drawdown),'win_rate':sum(x['payout'] for x in events)/len(events) if events else None,'equity_cost_basis':equity,'transactions':events,'limitations':'Research replay only. It is not taker-confirm-v1: one contract, same-row quotes, no latency. Do not compare it to the live paper ledger. Open positions valued at cost, not mark-to-market.'}
 if __name__=='__main__':
     p=argparse.ArgumentParser();p.add_argument('csv');p.add_argument('--output',default='backtest.json');a=p.parse_args();r=backtest(pd.read_csv(a.csv));open(a.output,'w').write(json.dumps(r,indent=2,default=str));print(a.output)

@@ -1,11 +1,12 @@
-import html
-import os
+from decimal import Decimal
 import pandas as pd
 import plotly.graph_objects as go
 import streamlit as st
 from btc15.domain import now
-from btc15.engine import Engine
-from btc15.paper import Risk,economics
+from btc15.engine import Engine, fee_multiplier
+from btc15.execution import book_top, liquidation, taker_charges
+from btc15.paper import Risk
+from research.audit_runtime import horizon_summary
 from research.evaluate import metrics
 
 st.set_page_config(page_title='BTC / 15 · Research terminal',page_icon='◷',layout='wide')
@@ -31,6 +32,20 @@ with st.sidebar:
     cutoff=st.number_input('Entry cutoff (seconds remaining)',60,900,90)
     trades=st.number_input('Maximum entries per interval',1,10,1)
     e.configure(enabled,accept,Risk(stake,fraction,edge,spread,depth,trades,cutoff))
+    ex=e.store.execution_status()
+    if ex['mode']=='legacy':
+        st.warning('This database already has paper rows from another execution model. Fills stay off and the file is not rewritten. Point DATABASE_PATH at a new file.')
+    elif ex['mode']=='version_mismatch':
+        st.warning('Execution manifest does not match this build. Fills stay off. Start a new database.')
+    elif ex['mode']=='active' and not ex['fills_armed']:
+        st.caption(f"Baseline {ex['baseline_recorded_at']}: cash ${ex['baseline_cash']:,.2f}, open positions {ex['baseline_open_positions']}, resolved {ex['baseline_resolved_positions']}. Forecast {ex['model_version']}. Fills are disarmed.")
+        if st.button('Arm taker fills',key='arm-taker'):
+            e.store.arm_fills()
+            st.caption('Armed. A hypothetical fill still requires both switches above and a later order book.')
+    elif ex['mode']=='active' and ex['fills_armed']:
+        st.caption(f"Taker fills armed at {ex['armed_at']} · {ex['execution_model']}. No real orders.")
+    else:
+        st.caption('Execution baseline is not recorded yet. Fills stay off.')
     st.divider();st.caption('Coinbase is a proxy for the CF Benchmarks BRTI. Model probability, measured model quality, and hypothetical price edge are separate quantities.')
 
 def plot_style(fig,height=350):
@@ -88,14 +103,17 @@ def terminal():
             quotes=pd.DataFrame([{'Side':'UP / YES','Bid':m.yes_bid_dollars,'Ask':m.yes_ask_dollars},{'Side':'DOWN / NO','Bid':m.no_bid_dollars,'Ask':m.no_ask_dollars}])
             st.dataframe(quotes,hide_index=True,width='stretch')
             st.caption(f'Volume: {m.volume_fp:,.0f} contracts · Open interest: {m.open_interest_fp:,.0f} contracts · Open interest is not executable liquidity.')
-            estimates=[];series=s.get('series') or {};fee_ok=series.get('fee_type')=='quadratic' and series.get('fee_multiplier') is not None
+            estimates=[];series=s.get('series') or {};mult=fee_multiplier(series)
             quote_fresh=s.get('book_received') and (at-s['book_received']).total_seconds()<=e.age
-            if p and fee_ok and quote_fresh:
+            top=book_top(s.get('book') or {}, getattr(m,'price_ranges',None) or []) if mult is not None else None
+            if p and mult is not None and quote_fresh and top:
                 for side,prob in [('yes',p['probability']),('no',1-p['probability'])]:
-                    levels=s['book'].get('no' if side=='yes' else 'yes',[])
-                    if levels:
-                        bid,available=max(levels);ask=1-bid
-                        if 0<ask<1:estimates.append({'side':side,'probability':prob,'executable_ask':ask,'available':available,**economics(prob,ask,1,float(series['fee_multiplier']))})
+                    ask=top['yes_ask'] if side=='yes' else top['no_ask']
+                    available=top['yes_ask_size'] if side=='yes' else top['no_ask_size']
+                    try:charges=taker_charges(Decimal('1'),ask,Decimal(str(mult)))
+                    except ValueError:continue
+                    debit=charges['debit']
+                    estimates.append({'side':side,'probability':prob,'executable_ask':float(ask),'available':float(available),'fee':float(charges['net_fee']),'cost':float(debit),'edge':float(Decimal(str(prob))-debit),'note':'one-contract illustration, not a fill'})
             if estimates:
                 best=max(estimates,key=lambda v:v['edge']);st.subheader((best['side'].upper()+' EDGE · hypothetical') if best['edge']>=e.risk.min_ev else 'NO EDGE')
                 st.dataframe(pd.DataFrame(estimates),hide_index=True,width='stretch')
@@ -124,6 +142,11 @@ def terminal():
         if d.empty:st.info('No officially resolved forecasts yet. Accuracy and calibration appear after Kalshi publishes outcomes.')
         else:
             latest=d.groupby('ticker').tail(1);a,b=st.columns(2);a.metric('Resolved prediction snapshots',len(d));b.metric('Distinct resolved contracts',len(latest))
+            st.caption('Last-forecast accuracy is the final stored snapshot for each resolved contract. On this collector that snapshot is often about 60 seconds before the final-minute cutoff. It is not the accuracy of the fills, and it is not an entry-time score.')
+            horizon=horizon_summary(latest.to_dict('records'))
+            near,early=st.columns(2)
+            near.metric('Last forecast · remaining ≤ 120s', '—' if horizon['near_cutoff_remaining_le_120s']['accuracy'] is None else f"{horizon['near_cutoff_remaining_le_120s']['accuracy']:.1%}", f"n={horizon['near_cutoff_remaining_le_120s']['n']}")
+            early.metric('Last forecast · remaining > 120s', '—' if horizon['earlier_remaining_gt_120s']['accuracy'] is None else f"{horizon['earlier_remaining_gt_120s']['accuracy']:.1%}", f"n={horizon['earlier_remaining_gt_120s']['n']}")
             for label,frame in [('Contract level · last forecast',latest),('Prediction level · correlated snapshots',d)]:
                 r=metrics(frame.label,frame.probability);st.subheader(label);st.write({k:r[k] for k in ['accuracy','brier','log_loss','ece']})
             st.line_chart(latest.assign(correct=(latest.probability>=.5)==latest.label).set_index('timestamp').correct.rolling(20,min_periods=1).mean())
@@ -131,12 +154,26 @@ def terminal():
             st.dataframe(d.groupby(pd.cut(d.remaining,[0,120,300,600,901]),observed=True).agg(n=('probability','size'),average_probability=('probability','mean'),observed_up=('label','mean')))
     with portfolio:
         account=e.store.frame('SELECT * FROM account').iloc[0];pos=e.store.frame('SELECT * FROM positions ORDER BY id');open_cost=float(pos.loc[pos.payout.isna(),'cost'].sum()) if len(pos) else 0;equity=account.cash+open_cost
-        a,b,c=st.columns(3);a.metric('Virtual cash',f'${account.cash:,.2f}');b.metric('Equity · open positions at cost',f'${equity:,.2f}');c.metric('Realized return',f'{(equity/account.initial-1):+.2%}')
-        st.caption('Simulation '+('enabled' if e.enabled else 'disabled')+' · No real orders can be placed. Top-of-book fills are hypothetical and capped by observed size; no queue or latency model.')
+        ex=e.store.execution_status()
+        a,b,c=st.columns(3);a.metric('Virtual cash',f'${account.cash:,.2f}');b.metric('Equity at cost',f'${equity:,.2f}');c.metric('Realized return at cost',f'{(equity/account.initial-1):+.2%}')
+        st.caption(f"Simulation {'enabled' if e.enabled else 'disabled'} · {ex['mode']} · {ex.get('execution_model') or 'no manifest'} · No real orders. Equity at cost is cash plus open debit. It is not a mark to market.")
         if len(pos):
             done=pos.dropna(subset=['payout']).sort_values('resolved_at');curve=account.initial+(done.payout-done.cost).cumsum();peak=curve.cummax().clip(lower=account.initial)
-            st.metric('Maximum realized-equity drawdown',f'{((peak-curve)/peak).max():.2%}' if len(curve) else '—');st.metric('Win rate',f'{(done.payout>0).mean():.1%}' if len(done) else '—')
-            st.line_chart(pd.DataFrame({'equity':curve.to_numpy()},index=done.resolved_at));st.dataframe(pos,width='stretch',hide_index=True)
+            st.metric('Maximum cost-basis drawdown',f'{((peak-curve)/peak).max():.2%}' if len(curve) else '—');st.metric('Fill win rate',f'{(done.payout>0).mean():.1%}' if len(done) else '—')
+            st.caption('Fill win rate counts resolved hypothetical taker fills with payout > 0. It is conditional on the entry filters. It is not forecast calibration; that is on Observed performance.')
+            opens=pos[pos.payout.isna()]
+            marks=[]
+            fresh=s.get('book_received') and (at-s['book_received']).total_seconds()<=e.age
+            mult=fee_multiplier(s.get('series') or {})
+            if fresh and mult is not None and m is not None and len(opens):
+                for _,row in opens.iterrows():
+                    if row.ticker!=m.ticker:marks.append(None);continue
+                    marks.append(liquidation(row.side,row.quantity,s.get('book') or {},getattr(m,'price_ranges',None) or [],mult))
+            if marks and all(v is not None for v in marks):
+                st.metric('Liquidation value if the displayed bid is still liftable',f"${account.cash+float(sum(marks)):,.2f}")
+            elif len(opens):
+                st.caption('Mark-to-market liquidation unavailable. Missing bid, tick grid, fee schedule, or a fresh book. Cost equity is still shown above.')
+            st.line_chart(pd.DataFrame({'cost-basis equity':curve.to_numpy()},index=done.resolved_at));st.dataframe(pos,width='stretch',hide_index=True)
             st.download_button('Download transaction history',pos.to_csv(index=False),'paper-transactions.csv','text/csv')
         else:st.info('No hypothetical entries. Enable simulation and explicitly allow the proxy model to begin.')
     with rules:

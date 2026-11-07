@@ -33,7 +33,7 @@ For development, `requirements.txt` contains compatibility bounds; `requirements
 - Virtual account, positions, realized return, cost-basis equity curve, drawdown and CSV export.
 - Exact retrieved market rules and series metadata.
 
-Live predictions update after each collection cycle (3-second delay plus API latency); the UI refreshes every 2 seconds. Slow providers can exceed the 1–5 second target. Data older than the configured freshness bound does not produce a forecast.
+Live predictions update after each collection cycle (3-second delay plus API latency); the UI refreshes every 2 seconds. The full open-market list, one-minute candles, and recent-trade prints are slower than that poll. See [docs/IMPROVEMENT_PLAN.md](docs/IMPROVEMENT_PLAN.md). Slow providers can exceed the 1–5 second target. Data older than the configured freshness bound does not produce a forecast.
 
 ## Settlement target and limitations
 
@@ -54,7 +54,7 @@ variance = (spot × sigma)^2 × (T − 40) + basis_sigma_usd^2
 P(YES) = NormalCDF((spot − (official_threshold − 0.005)) / sqrt(variance))
 ```
 
-The half-cent boundary approximates the two-decimal rounding rule for a continuous distribution. Default proxy basis standard deviation is $25, an **assumption, not an estimated or calibrated parameter**. The displayed 95% price range is conditional on these assumptions; it is not a confidence interval on model skill. Drift, jumps, regime shifts, index construction, reference outages, discrete sampling, and source revisions can invalidate the approximation. The model does not estimate the probability of a reference outage (the terms describe missing-data resolution). Probabilities are bounded to [0.001, 0.999] to avoid unwarranted certainty.
+Callers pass the official threshold. `statistical()` subtracts the half cent itself so the two-decimal rounding boundary is not applied twice and cannot be skipped. Default proxy basis standard deviation is $25 (`BASIS_SIGMA_USD`), an **assumption, not an estimated or calibrated parameter**. `rolling_basis_sigma()` returns an empirical width only from paired proxy and CF Benchmarks index samples; Coinbase alone is not that index, and $25 remains the fallback. The live collector does not have entitled index samples, so it keeps the assumption. The displayed 95% price range is conditional on these assumptions; it is not a confidence interval on model skill. Drift, jumps, regime shifts, index construction, reference outages, discrete sampling, and source revisions can invalidate the approximation. The model does not estimate the probability of a reference outage (the terms describe missing-data resolution). Probabilities are bounded to [0.001, 0.999] to avoid unwarranted certainty. Final-minute forecasts stay suspended without observed BRTI samples.
 
 Official settlement labels and virtual payouts come only from Kalshi `settled`/`finalized` markets with `yes`/`no` results. Void, disputed, or nonbinary outcomes remain unresolved for manual investigation rather than receiving invented payouts. Official-result corrections after first resolution are not automatically reversed in the ledger.
 
@@ -62,17 +62,13 @@ Official settlement labels and virtual payouts come only from Kalshi `settled`/`
 
 Disabled on every new server start. In Research controls, enable simulation **and** explicitly permit unvalidated proxy forecasts. These controls never enable real orders: there is no order-submission implementation.
 
-The simulator derives YES asks from opposing NO bids, and vice versa. It only assumes fills at the best available level, caps whole-contract quantity at displayed depth and spend limits, and rejects excessive spreads, insufficient liquidity and late entries. Fees use the retrieved quadratic series multiplier:
+Live paper entries use `taker-confirm-v1`, not the older same-snapshot helper. A YES ask is `1 − best NO bid`, and a NO ask is `1 − best YES bid`, from the order book only. The decision is stored as an intent. A fill is allowed only against a later fresh book, at least `EXECUTION_LATENCY_SECONDS` (default 3) afterward, and only if that later touch is still inside the limit, on the market's price grid, and at least `min_depth` at that one price. The first such book is the only attempt. If it is crossed, thin, or through the limit, the intent expires and does not rest. Displayed size is an upper bound. It is not a queue position, and there is no trade-tape check that a print happened.
 
-```text
-fee = ceil_to_cent(0.07 × quantity × price × (1 − price) × multiplier)
-EV = quantity × estimated_win_probability − entry_cost − fee
-break_even_probability = (entry_cost + fee) / quantity
-```
+Fees follow the public general taker table: model fee `0.07 × multiplier × contracts × price × (1 − price)`, trade fee rounded up to `$0.000001`, and the cash debit rounded up to the next cent. See [docs/EXECUTION.md](docs/EXECUTION.md) for the July 7, 2026 table check and the remaining gaps. Flat fees and a missing grid fail closed. Fills stay off until a baseline row is stored and **Arm taker fills** is clicked, and until both sidebar switches are on. `STARTING_BANKROLL` defaults to $1,000 for a new database only. Nothing resets an existing account.
 
-A missing or unsupported fee type blocks paper entries. Fees are estimates; changes, waivers, promotions or other special terms may require updates. The default minimum EV is $0.03 per contract, maximum spend $10, maximum cash allocation 2%, one entry per interval, 90-second cutoff. `STARTING_BANKROLL` defaults to $1,000 and applies only to a new database account. There is no deposit/reset operation in the UI.
+Cost-basis equity is cash plus open debit. A liquidation mark, when shown, is the bid minus the taker fee and is omitted when that bid cannot cover the position. Fill win rate is not forecast calibration. A hypothetical edge is not evidence of live profit.
 
-Simulation is optimistic about latency and queue competition. The quoted size may disappear before a real fill. No order-book walking, market impact, partial fill queue, or latency slippage is modeled; sizes are capped at one level instead. A displayed hypothetical edge is not proof of profitability. Open positions are valued at cost, not marked to market; the reported drawdown is a realized/cost-basis measure.
+[docs/PAPER.md](docs/PAPER.md) is the separate-database kickoff. [docs/EXECUTION.md](docs/EXECUTION.md) is the audit. Do not point a new process at a ledger that already has paper rows.
 
 ## Architecture
 
@@ -92,10 +88,10 @@ flowchart TD
 ```
 
 - `btc15/domain.py`: typed API market parsing, UTC, active-market selection, official labels.
-- `btc15/feeds.py`: GET-only clients, throttling, retry/backoff, pagination, fixed-point book parsing, reconnecting Coinbase stream.
+- `btc15/feeds.py`: GET-only clients, throttling, retry/backoff, pagination, fixed-point book parsing, reconnecting Coinbase stream. The open `KXBTC15M` list is cached; the collector refreshes the current ticker every cycle.
 - `btc15/features.py`: completed-candle feature builder and missing-data checks.
-- `btc15/model.py`: averaging baseline and trusted model-artifact inference.
-- `btc15/engine.py`: process-shared collector, rollover, inference and resolution polling.
+- `btc15/model.py`: averaging baseline (half-cent boundary and $25 basis assumption inside `statistical()`) and trusted model-artifact inference. No artifact is bundled; the statistical baseline is the fallback.
+- `btc15/engine.py`: process-shared collector, rollover, inference and resolution polling. Candles and 24h stats refresh about once a minute. Trades are fetched every N cycles. Books are fetched on a cycle only when a forecast can use them. Settlement polling skips markets that have not reached `close_time`.
 - `btc15/store.py`: locked WAL SQLite persistence, deduplication and atomic portfolio settlement.
 - `btc15/paper.py`: fee math, hypothetical EV and virtual risk limits.
 - `research/`: dataset import/export, chronological fitting, calibration, learned blend, walk-forward evaluation and quote replay.
@@ -103,14 +99,14 @@ flowchart TD
 
 ## Data, training and evaluation
 
-No legitimate labeled training archive was supplied, so no model artifact is bundled. At least 100 resolved contracts are required to run fitting; this is a mechanical minimum, **not evidence of reliability**. Prefer thousands of contracts spanning volatility regimes and independently held-out dates. Repeated snapshots within a contract are correlated.
+No model artifact is bundled. A bounded public sample can be downloaded with the commands in [docs/HISTORICAL.md](docs/HISTORICAL.md). That sample is a predictive study only: Coinbase candles are not BRTI, and missing order-book depth means there is no executable backtest. At least 100 resolved contracts are required to run fitting; this is a mechanical minimum, **not evidence of reliability**. Prefer thousands of contracts spanning volatility regimes and independently held-out dates. Repeated snapshots within a contract are correlated. The walk-forward command writes a JSON report and does not install a model.
 
-As the app runs it stores ticks, prediction features, contemporaneous top quotes and official results in SQLite. Export resolved observations:
+As the app runs it stores prediction features, top-of-book quotes from cycles that fetched a book, and official results in SQLite. Coinbase prints stay in memory for the live pressure window and are persisted at most once per exchange-timestamp second, in batches. Export resolved observations:
 
 ```bash
 python -m research.dataset runtime.sqlite dataset.csv
 python -m research.train dataset.csv --output artifacts/model.joblib
-# Or expanding-window reports, requiring at least 250 contracts:
+# Expanding-window report, requiring at least 250 contracts. Does not write a model file.
 python -m research.walk_forward dataset.csv --output artifacts
 ```
 
@@ -145,9 +141,14 @@ The replay requires quote timestamps, YES/NO asks and depth, and historical fee 
 | `MODEL_PATH` | `artifacts/model.joblib` | Optional trusted trained artifact |
 | `POLL_SECONDS` | `3` | Delay between collection cycles |
 | `MAX_DATA_AGE` | `10` | Maximum tick and UI snapshot age, seconds |
-| `BASIS_SIGMA_USD` | `25` | Assumed proxy-index basis uncertainty |
+| `BASIS_SIGMA_USD` | `25` | Assumed proxy-index basis uncertainty, not fit from Coinbase |
 | `STARTING_BANKROLL` | `1000` | Initial virtual cash for new DB |
 | `LOG_LEVEL` | `INFO` | Logging verbosity |
+| `MARKET_DISCOVERY_SECONDS` | `60` | Full open-market list interval; current ticker still refreshes every cycle |
+| `CANDLE_SECONDS` | `60` | Candles, Coinbase imbalance, and 24h stats interval |
+| `TRADES_EVERY_CYCLES` | `5` | Kalshi trade-print interval, in collector cycles |
+| `EXECUTION_LATENCY_SECONDS` | `3` | Minimum delay between a paper decision and the book that may fill it |
+| `EXECUTION_INTENT_SECONDS` | `20` | Drop an unfilled intent after this many seconds |
 
 No API keys are needed. `.env`, databases and trained artifacts are ignored by Git. Back up the SQLite database yourself, preferably using SQLite's backup API while the app is running. Storage grows continuously; retention/compaction and multi-worker coordination are not implemented. The app requires continued operation to record observations and resolve its tracked contracts.
 
