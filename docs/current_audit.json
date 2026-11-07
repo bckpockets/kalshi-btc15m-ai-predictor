@@ -1,0 +1,536 @@
+{
+  "schema": "runtime-audit-v1",
+  "optimizes_rules": false,
+  "writes": false,
+  "source_span": {
+    "first_quote": "2026-11-05T23:19:37.023497+00:00",
+    "last_quote": "2026-11-07T00:25:38.423855+00:00"
+  },
+  "cutoff_note": "Figures use only rows in this file. A later verbal tally is not in the file.",
+  "settlement_conflicts": 0,
+  "cash_identity": {
+    "ok": true,
+    "expected_cash": "77.02",
+    "cash": "77.02"
+  },
+  "fills_ok": 33,
+  "fills_bad": [],
+  "horizon": {
+    "schema": "forecast-horizon-v1",
+    "optimizes_rules": false,
+    "all_last": {
+      "n": 36,
+      "accuracy": 0.9166666666666666,
+      "brier": 0.059762912759696474,
+      "median_remaining": 61.422105
+    },
+    "near_cutoff_remaining_le_120s": {
+      "n": 28,
+      "accuracy": 1.0,
+      "brier": 0.021610013656729356,
+      "median_remaining": 61.254074
+    },
+    "earlier_remaining_gt_120s": {
+      "n": 8,
+      "accuracy": 0.625,
+      "brier": 0.1932980596200813,
+      "median_remaining": 501.906139
+    },
+    "note": "Last-forecast accuracy is not the accuracy of the contracts that were traded."
+  },
+  "silence": [
+    {
+      "kind": "cross_contract_silence",
+      "seconds": 542.483805,
+      "from": "2026-11-06T01:07:04.875407+00:00",
+      "to": "2026-11-06T01:16:07.359212+00:00",
+      "from_ticker": "KXBTC15M-26NOV052015-15",
+      "to_ticker": "KXBTC15M-26NOV052030-30",
+      "inactive_series": false
+    },
+    {
+      "kind": "cross_contract_silence",
+      "seconds": 969.691687,
+      "from": "2026-11-06T02:15:42.697518+00:00",
+      "to": "2026-11-06T02:31:52.389205+00:00",
+      "from_ticker": "KXBTC15M-26NOV052130-30",
+      "to_ticker": "KXBTC15M-26NOV052145-45",
+      "inactive_series": false
+    },
+    {
+      "kind": "cross_contract_silence",
+      "seconds": 1145.314935,
+      "from": "2026-11-06T03:38:03.138755+00:00",
+      "to": "2026-11-06T03:57:08.453690+00:00",
+      "from_ticker": "KXBTC15M-26NOV052245-45",
+      "to_ticker": "KXBTC15M-26NOV052300-00",
+      "inactive_series": false
+    },
+    {
+      "kind": "cross_contract_silence",
+      "seconds": 24097.566596,
+      "from": "2026-11-06T05:21:38.093861+00:00",
+      "to": "2026-11-06T12:03:15.660457+00:00",
+      "from_ticker": "KXBTC15M-26NOV060030-30",
+      "to_ticker": "KXBTC15M-26NOV060715-15",
+      "inactive_series": false
+    },
+    {
+      "kind": "cross_contract_silence",
+      "seconds": 5455.937385,
+      "from": "2026-11-06T12:06:02.648912+00:00",
+      "to": "2026-11-06T13:36:58.586297+00:00",
+      "from_ticker": "KXBTC15M-26NOV060715-15",
+      "to_ticker": "KXBTC15M-26NOV060845-45",
+      "inactive_series": false
+    },
+    {
+      "kind": "same_contract_silence",
+      "seconds": 255.406366,
+      "from": "2026-11-06T13:49:26.414361+00:00",
+      "to": "2026-11-06T13:53:41.820727+00:00",
+      "from_ticker": "KXBTC15M-26NOV060900-00",
+      "to_ticker": "KXBTC15M-26NOV060900-00",
+      "inactive_series": false
+    },
+    {
+      "kind": "cross_contract_silence",
+      "seconds": 25460.544469,
+      "from": "2026-11-06T14:01:47.764043+00:00",
+      "to": "2026-11-06T21:06:08.308512+00:00",
+      "from_ticker": "KXBTC15M-26NOV060915-15",
+      "to_ticker": "KXBTC15M-26NOV061615-15",
+      "inactive_series": false
+    },
+    {
+      "kind": "cross_contract_silence",
+      "seconds": 2907.106525,
+      "from": "2026-11-06T21:06:49.341879+00:00",
+      "to": "2026-11-06T21:55:16.448404+00:00",
+      "from_ticker": "KXBTC15M-26NOV061615-15",
+      "to_ticker": "KXBTC15M-26NOV061700-00",
+      "inactive_series": false
+    },
+    {
+      "kind": "cross_contract_silence",
+      "seconds": 4724.433369,
+      "from": "2026-11-06T22:08:35.742534+00:00",
+      "to": "2026-11-06T23:27:20.175903+00:00",
+      "from_ticker": "KXBTC15M-26NOV061715-15",
+      "to_ticker": "KXBTC15M-26NOV061830-30",
+      "inactive_series": false
+    },
+    {
+      "kind": "same_contract_silence",
+      "seconds": 174.146964,
+      "from": "2026-11-06T23:53:36.456509+00:00",
+      "to": "2026-11-06T23:56:30.603473+00:00",
+      "from_ticker": "KXBTC15M-26NOV061900-00",
+      "to_ticker": "KXBTC15M-26NOV061900-00",
+      "inactive_series": false
+    },
+    {
+      "kind": "same_contract_silence",
+      "seconds": 250.975197,
+      "from": "2026-11-07T00:04:07.474495+00:00",
+      "to": "2026-11-07T00:08:18.449692+00:00",
+      "from_ticker": "KXBTC15M-26NOV061915-15",
+      "to_ticker": "KXBTC15M-26NOV061915-15",
+      "inactive_series": false
+    },
+    {
+      "kind": "cross_contract_silence",
+      "seconds": 177.998643,
+      "from": "2026-11-07T00:13:57.649407+00:00",
+      "to": "2026-11-07T00:16:55.648050+00:00",
+      "from_ticker": "KXBTC15M-26NOV061915-15",
+      "to_ticker": "KXBTC15M-26NOV061930-30",
+      "inactive_series": false
+    },
+    {
+      "kind": "same_contract_silence",
+      "seconds": 183.438592,
+      "from": "2026-11-07T00:16:55.648050+00:00",
+      "to": "2026-11-07T00:19:59.086642+00:00",
+      "from_ticker": "KXBTC15M-26NOV061930-30",
+      "to_ticker": "KXBTC15M-26NOV061930-30",
+      "inactive_series": false
+    },
+    {
+      "kind": "same_contract_silence",
+      "seconds": 190.891097,
+      "from": "2026-11-07T00:21:25.637929+00:00",
+      "to": "2026-11-07T00:24:36.529026+00:00",
+      "from_ticker": "KXBTC15M-26NOV061930-30",
+      "to_ticker": "KXBTC15M-26NOV061930-30",
+      "inactive_series": false
+    }
+  ],
+  "traded_subset": {
+    "schema": "traded-subset-v1",
+    "optimizes_rules": false,
+    "fills": 33,
+    "settled": 32,
+    "payout_positive": 11,
+    "side_probability_below_half": 21,
+    "model_ev": "9.90996728691883686450",
+    "realized": "-21.41",
+    "note": "Side probability below 0.5 can still clear a price edge. This sample does not set a new minimum."
+  },
+  "cohorts": {
+    "before_recorded_stop": {
+      "schema": "traded-subset-v1",
+      "optimizes_rules": false,
+      "fills": 26,
+      "settled": 26,
+      "payout_positive": 9,
+      "side_probability_below_half": 16,
+      "model_ev": "7.00271029917960662750",
+      "realized": "-18.58",
+      "note": "Side probability below 0.5 can still clear a price edge. This sample does not set a new minimum.",
+      "settled_side": {
+        "n": 26,
+        "brier": 0.14736354565281712,
+        "accuracy": 0.7307692307692307,
+        "mean_probability": 0.49090620828383275,
+        "outcome_rate": 0.34615384615384615
+      }
+    },
+    "resume_before_deploy": {
+      "schema": "traded-subset-v1",
+      "optimizes_rules": false,
+      "fills": 7,
+      "settled": 6,
+      "payout_positive": 2,
+      "side_probability_below_half": 5,
+      "model_ev": "2.9072569877392302370",
+      "realized": "-2.83",
+      "note": "Side probability below 0.5 can still clear a price edge. This sample does not set a new minimum.",
+      "settled_side": {
+        "n": 6,
+        "brier": 0.18524638083982914,
+        "accuracy": 0.6666666666666666,
+        "mean_probability": 0.4455865595622263,
+        "outcome_rate": 0.3333333333333333
+      }
+    },
+    "after_deploy": {
+      "schema": "traded-subset-v1",
+      "optimizes_rules": false,
+      "fills": 0,
+      "settled": 0,
+      "payout_positive": 0,
+      "side_probability_below_half": 0,
+      "model_ev": "0",
+      "realized": "0",
+      "note": "Side probability below 0.5 can still clear a price edge. This sample does not set a new minimum.",
+      "settled_side": {
+        "n": 0,
+        "brier": null,
+        "accuracy": null,
+        "mean_probability": null,
+        "outcome_rate": null
+      }
+    }
+  },
+  "entry_horizon_population": {
+    "n": 34,
+    "brier": 0.10309032071434193,
+    "accuracy": 0.8235294117647058,
+    "mean_probability": 0.4958530056769482,
+    "outcome_rate": 0.5588235294117647
+  },
+  "paper_decision_quotes": {
+    "exact": 22,
+    "float_dust": 11,
+    "differs": 0,
+    "absent": 0,
+    "note": "Matched on quotes.observed_at equal to signal_book_at. Compared with the intent limit, which is the decision ask."
+  },
+  "paper_confirm_quotes": {
+    "exact": 23,
+    "float_dust": 10,
+    "differs": 0,
+    "absent": 0,
+    "note": "Matched on quotes.observed_at equal to confirm_book_at. This is the paper process book, not a depth poll."
+  },
+  "bounds": {
+    "stop_at": "2026-11-06T21:06:50+00:00",
+    "deploy_at": "2026-11-07T00:25:29.099953+00:00"
+  },
+  "depth_async": {
+    "evidence_counts": {
+      "recorded_book_exact": 15,
+      "recorded_book_differs": 10,
+      "missing": 8
+    },
+    "same_http_response_as_fill": false,
+    "note": "A differing ask is another poll in (decision, confirm]. It is not the paper process response.",
+    "fills": [
+      {
+        "position_id": 1,
+        "depth_evidence": "missing",
+        "fill_minus_recorded_ask": null,
+        "depth_received_at": null,
+        "same_http_response_as_fill": false,
+        "depth_rows_in_window": 0
+      },
+      {
+        "position_id": 2,
+        "depth_evidence": "missing",
+        "fill_minus_recorded_ask": null,
+        "depth_received_at": null,
+        "same_http_response_as_fill": false,
+        "depth_rows_in_window": 0
+      },
+      {
+        "position_id": 3,
+        "depth_evidence": "recorded_book_differs",
+        "fill_minus_recorded_ask": "-0.0100",
+        "depth_received_at": "2026-11-05T23:46:25.067544+00:00",
+        "same_http_response_as_fill": false,
+        "depth_rows_in_window": 1
+      },
+      {
+        "position_id": 4,
+        "depth_evidence": "recorded_book_exact",
+        "fill_minus_recorded_ask": "0.0000",
+        "depth_received_at": "2026-11-06T00:04:07.789681+00:00",
+        "same_http_response_as_fill": false,
+        "depth_rows_in_window": 1
+      },
+      {
+        "position_id": 5,
+        "depth_evidence": "recorded_book_exact",
+        "fill_minus_recorded_ask": "0.0000",
+        "depth_received_at": "2026-11-06T00:16:03.370837+00:00",
+        "same_http_response_as_fill": false,
+        "depth_rows_in_window": 1
+      },
+      {
+        "position_id": 6,
+        "depth_evidence": "recorded_book_exact",
+        "fill_minus_recorded_ask": "0.0000",
+        "depth_received_at": "2026-11-06T00:32:18.299022+00:00",
+        "same_http_response_as_fill": false,
+        "depth_rows_in_window": 1
+      },
+      {
+        "position_id": 7,
+        "depth_evidence": "recorded_book_differs",
+        "fill_minus_recorded_ask": "-0.0200",
+        "depth_received_at": "2026-11-06T00:47:00.038453+00:00",
+        "same_http_response_as_fill": false,
+        "depth_rows_in_window": 1
+      },
+      {
+        "position_id": 8,
+        "depth_evidence": "recorded_book_differs",
+        "fill_minus_recorded_ask": "-0.0300",
+        "depth_received_at": "2026-11-06T01:01:19.064819+00:00",
+        "same_http_response_as_fill": false,
+        "depth_rows_in_window": 1
+      },
+      {
+        "position_id": 9,
+        "depth_evidence": "recorded_book_exact",
+        "fill_minus_recorded_ask": "0.0000",
+        "depth_received_at": "2026-11-06T01:17:02.617970+00:00",
+        "same_http_response_as_fill": false,
+        "depth_rows_in_window": 1
+      },
+      {
+        "position_id": 10,
+        "depth_evidence": "recorded_book_differs",
+        "fill_minus_recorded_ask": "-0.0010",
+        "depth_received_at": "2026-11-06T01:40:46.403841+00:00",
+        "same_http_response_as_fill": false,
+        "depth_rows_in_window": 1
+      },
+      {
+        "position_id": 11,
+        "depth_evidence": "recorded_book_differs",
+        "fill_minus_recorded_ask": "0.0100",
+        "depth_received_at": "2026-11-06T01:47:25.197798+00:00",
+        "same_http_response_as_fill": false,
+        "depth_rows_in_window": 1
+      },
+      {
+        "position_id": 12,
+        "depth_evidence": "recorded_book_exact",
+        "fill_minus_recorded_ask": "0.0000",
+        "depth_received_at": "2026-11-06T02:03:13.486484+00:00",
+        "same_http_response_as_fill": false,
+        "depth_rows_in_window": 2
+      },
+      {
+        "position_id": 13,
+        "depth_evidence": "recorded_book_exact",
+        "fill_minus_recorded_ask": "0.0000",
+        "depth_received_at": "2026-11-06T02:32:04.864994+00:00",
+        "same_http_response_as_fill": false,
+        "depth_rows_in_window": 1
+      },
+      {
+        "position_id": 14,
+        "depth_evidence": "recorded_book_exact",
+        "fill_minus_recorded_ask": "0.0000",
+        "depth_received_at": "2026-11-06T02:55:48.677757+00:00",
+        "same_http_response_as_fill": false,
+        "depth_rows_in_window": 1
+      },
+      {
+        "position_id": 15,
+        "depth_evidence": "recorded_book_exact",
+        "fill_minus_recorded_ask": "0.0000",
+        "depth_received_at": "2026-11-06T03:01:33.854723+00:00",
+        "same_http_response_as_fill": false,
+        "depth_rows_in_window": 2
+      },
+      {
+        "position_id": 16,
+        "depth_evidence": "recorded_book_exact",
+        "fill_minus_recorded_ask": "0.0000",
+        "depth_received_at": "2026-11-06T03:23:29.392338+00:00",
+        "same_http_response_as_fill": false,
+        "depth_rows_in_window": 1
+      },
+      {
+        "position_id": 17,
+        "depth_evidence": "recorded_book_exact",
+        "fill_minus_recorded_ask": "0.0000",
+        "depth_received_at": "2026-11-06T03:34:06.705564+00:00",
+        "same_http_response_as_fill": false,
+        "depth_rows_in_window": 1
+      },
+      {
+        "position_id": 18,
+        "depth_evidence": "recorded_book_exact",
+        "fill_minus_recorded_ask": "0.0000",
+        "depth_received_at": "2026-11-06T04:04:54.853971+00:00",
+        "same_http_response_as_fill": false,
+        "depth_rows_in_window": 1
+      },
+      {
+        "position_id": 19,
+        "depth_evidence": "recorded_book_differs",
+        "fill_minus_recorded_ask": "-0.0100",
+        "depth_received_at": "2026-11-06T04:32:47.793756+00:00",
+        "same_http_response_as_fill": false,
+        "depth_rows_in_window": 1
+      },
+      {
+        "position_id": 20,
+        "depth_evidence": "recorded_book_exact",
+        "fill_minus_recorded_ask": "0.0000",
+        "depth_received_at": "2026-11-06T04:45:51.881725+00:00",
+        "same_http_response_as_fill": false,
+        "depth_rows_in_window": 1
+      },
+      {
+        "position_id": 21,
+        "depth_evidence": "recorded_book_exact",
+        "fill_minus_recorded_ask": "0.0000",
+        "depth_received_at": "2026-11-06T05:02:17.322992+00:00",
+        "same_http_response_as_fill": false,
+        "depth_rows_in_window": 1
+      },
+      {
+        "position_id": 22,
+        "depth_evidence": "recorded_book_exact",
+        "fill_minus_recorded_ask": "0.0000",
+        "depth_received_at": "2026-11-06T05:15:22.341146+00:00",
+        "same_http_response_as_fill": false,
+        "depth_rows_in_window": 2
+      },
+      {
+        "position_id": 23,
+        "depth_evidence": "recorded_book_differs",
+        "fill_minus_recorded_ask": "-0.0100",
+        "depth_received_at": "2026-11-06T12:03:16.763677+00:00",
+        "same_http_response_as_fill": false,
+        "depth_rows_in_window": 1
+      },
+      {
+        "position_id": 24,
+        "depth_evidence": "recorded_book_differs",
+        "fill_minus_recorded_ask": "-0.0030",
+        "depth_received_at": "2026-11-06T13:36:59.773642+00:00",
+        "same_http_response_as_fill": false,
+        "depth_rows_in_window": 1
+      },
+      {
+        "position_id": 25,
+        "depth_evidence": "recorded_book_differs",
+        "fill_minus_recorded_ask": "0.0100",
+        "depth_received_at": "2026-11-06T13:53:47.649098+00:00",
+        "same_http_response_as_fill": false,
+        "depth_rows_in_window": 1
+      },
+      {
+        "position_id": 26,
+        "depth_evidence": "recorded_book_exact",
+        "fill_minus_recorded_ask": "0.0000",
+        "depth_received_at": "2026-11-06T21:06:12.610677+00:00",
+        "same_http_response_as_fill": false,
+        "depth_rows_in_window": 1
+      },
+      {
+        "position_id": 27,
+        "depth_evidence": "missing",
+        "fill_minus_recorded_ask": null,
+        "depth_received_at": null,
+        "same_http_response_as_fill": false,
+        "depth_rows_in_window": 0
+      },
+      {
+        "position_id": 28,
+        "depth_evidence": "recorded_book_differs",
+        "fill_minus_recorded_ask": "0.0100",
+        "depth_received_at": "2026-11-06T22:00:41.631632+00:00",
+        "same_http_response_as_fill": false,
+        "depth_rows_in_window": 1
+      },
+      {
+        "position_id": 29,
+        "depth_evidence": "missing",
+        "fill_minus_recorded_ask": null,
+        "depth_received_at": null,
+        "same_http_response_as_fill": false,
+        "depth_rows_in_window": 0
+      },
+      {
+        "position_id": 30,
+        "depth_evidence": "missing",
+        "fill_minus_recorded_ask": null,
+        "depth_received_at": null,
+        "same_http_response_as_fill": false,
+        "depth_rows_in_window": 0
+      },
+      {
+        "position_id": 31,
+        "depth_evidence": "missing",
+        "fill_minus_recorded_ask": null,
+        "depth_received_at": null,
+        "same_http_response_as_fill": false,
+        "depth_rows_in_window": 0
+      },
+      {
+        "position_id": 32,
+        "depth_evidence": "missing",
+        "fill_minus_recorded_ask": null,
+        "depth_received_at": null,
+        "same_http_response_as_fill": false,
+        "depth_rows_in_window": 0
+      },
+      {
+        "position_id": 33,
+        "depth_evidence": "missing",
+        "fill_minus_recorded_ask": null,
+        "depth_received_at": null,
+        "same_http_response_as_fill": false,
+        "depth_rows_in_window": 0
+      }
+    ]
+  }
+}

@@ -1,5 +1,7 @@
 # Runtime audit of the 2026-11-06 package
 
+This note is the package collected at `2026-11-06T21:42:19Z`. A later backup, cutoff `2026-11-07T00:25:39Z`, is in [CURRENT_AUDIT.md](CURRENT_AUDIT.md). Do not read the cash and win counts below as that later file.
+
 The attached archive is the package collected at `2026-11-06T21:42:19.797548Z` (`evidence/collected_at_utc.txt` is `2026-11-06T21:40:53Z`). Payload checksums in `SHA256SUMS` matched. Its sqlite backup is `payload/runtime_consistent.sqlite`. The last paper `status.json` write in the package is `2026-11-06T21:06:07Z`. The last depth receive is `2026-11-06T21:06:50.278633Z`. The last quote in the backup is `2026-11-06T21:06:49.341879Z`.
 
 That file does not contain a later 24-hour tally. Cash **79.31**, open cost **1.48**, equity **80.79**, 28 resolved (10W18L), 29 fills, and 57 intents were reported separately and are not rows in this package. This note does not recompute them.
